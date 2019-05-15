@@ -1,15 +1,18 @@
 import { app, ipcMain, BrowserWindow } from "electron";
 
+const INDEX = process.cwd() + "/dist/renderer/views/index.html";
 let window: BrowserWindow = null;
 
-app.on("ready", () => {
-	window = new BrowserWindow({width: 800, height: 600, resizable: false});
-	const fp = process.cwd() + "/dist/renderer/views/index.html";
-	console.log(fp);
-	window.on("ready-to-show", ()=> window.loadFile(fp))
-});
+function main() {
+	window = new BrowserWindow({
+		width: 1440,
+		height: 900,
+		// fullscreen: true,
+		darkTheme: true,
+	});
+	window.loadFile(INDEX);
+	window.on("ready-to-show", window.show);
+}
 
-app.on("window-all-closed", ()=> {
-	window = null;
-	app.exit(0);
-});
+app.on("ready", main);
+app.on("window-all-closed", () => app.exit(0));
