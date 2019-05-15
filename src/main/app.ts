@@ -4,7 +4,9 @@ let window: BrowserWindow = null;
 
 app.on("ready", () => {
 	window = new BrowserWindow({width: 800, height: 600, resizable: false});
-	window.on("ready-to-show", ()=> window.loadFile("dist/renderer/views/index.html"))
+	const fp = process.cwd() + "/dist/renderer/views/index.html";
+	console.log(fp);
+	window.on("ready-to-show", ()=> window.loadFile(fp))
 });
 
 app.on("window-all-closed", ()=> {

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron ./dist/main/app.js"
+    "start": "./node_modules/.bin/electron ./dist/main/app.js",
+    "start-server": "node ./dist/server/server.js"
   },
   "repository": {
     "type": "git",
