@@ -1,4 +1,6 @@
-node_modules
 .idea
-.env
+node_modules
+config/*
 database/*
+templates/*
+.env

@@ -1,47 +1,64 @@
-import { app, ipcMain, BrowserWindow } from "electron";
+import { app, BrowserWindow } from "electron";
 import { ChildProcess, spawn } from "child_process";
-import low from "lowdb"
-import FileSync from "lowdb/adapters/FileSync";
 import { resolve } from "path";
+import { readdirSync } from "fs";
+import { initDatabase } from "./database/initDatabase";
+import ipcMain = Electron.ipcMain;
 
-const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
-const DB_PATH = resolve(process.cwd(), "database/db.json");
+export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
+export const TEMPLATES_DIR = resolve(process.cwd(), "templates");
 
-const adapter = new FileSync(DB_PATH)
-const db = low(adapter);
-db.defaults({polls:[]});
-db.write();
-// @ts-ignore
-db.get("polls").push({});
-db.write();
-
-let window: BrowserWindow = null;
 let server: ChildProcess = null;
+let db = null;
+let temp_index = 0;
+let window: BrowserWindow = null;
 
-function main() {
-	startServer();
+export let templates: string[] = readdirSync(TEMPLATES_DIR)
+	.filter(dir => dir.endsWith(".html"))
+	.map(dir => resolve(TEMPLATES_DIR, dir));
+
+function close() {
+	if (server != null)
+		server.kill("SIGKILL");
+	app.exit(0);
+	process.exit(0);
+}
+
+function startServer(): ChildProcess {
+	return spawn("node", ["dist/server/server.js"], {stdio: "inherit"});
+}
+
+async function main() {
+	db = await initDatabase();
+	// await addVote(db, "e4S1v_j_o", new Vote("choice1", "3365"));
+	// await addPoll(db, new Poll(["choice 1", "choice 2"], new Date()));
+	server = startServer();
 	window = new BrowserWindow({
 		width: 1440,
 		height: 900,
-		// fullscreen: true,
 		darkTheme: true,
+		title: "Metropolitan Bulletin Board"
 	});
+	// window.setMenu(null);
 	window.loadFile(INDEX);
+	// window.loadFile(templates[temp_index]);
+	const slideshowInterval = setInterval(changeSlide, 2000);
+
 	window.on("ready-to-show", window.show);
 }
 
-function close() {
-	server.kill("SIGKILL");
-	app.exit(0);
+function changeSlide() {
+	const template = resolve(TEMPLATES_DIR, templates[temp_index]);
+	window.webContents.send("change-template", template);
+	temp_index++;
+	temp_index = temp_index == templates.length ? 0 : temp_index;
 }
 
-function startServer() {
-	try {
-		server = spawn("node", ["dist/server/server.js"], {stdio: "inherit"});
-	} catch (e) {
-		throw e;
-	}
-}
+// function changeSlide() {
+// 	window.loadFile(resolve(TEMPLATES_DIR, templates[temp_index]));
+// 	temp_index++;
+// 	temp_index = temp_index == templates.length ? 0 : temp_index;
+// }
 
 app.on("ready", main);
 app.on("window-all-closed", close);

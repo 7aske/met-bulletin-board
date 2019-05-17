@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import { resolve } from "path";
 import router from "./router";
+import { resolve } from "path";
 
 const result = dotenv.config({path: resolve(process.cwd(), "config/.env")});
 

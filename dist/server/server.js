@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var dotenv_1 = __importDefault(require("dotenv"));
-var path_1 = require("path");
 var router_1 = __importDefault(require("./router"));
+var path_1 = require("path");
 var result = dotenv_1.default.config({ path: path_1.resolve(process.cwd(), "config/.env") });
 if (result.error) {
     throw result.error;
