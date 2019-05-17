@@ -34,21 +34,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-function addVote(db, id, vote) {
-    return __awaiter(this, void 0, void 0, function () {
-        var poll;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, db.get("polls").find({ id: id })];
-                case 1:
-                    poll = _a.sent();
-                    return [4 /*yield*/, poll.get("votes").push(vote.json()).write()];
-                case 2:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
+exports.addVote = function (db, id, vote) { return __awaiter(_this, void 0, void 0, function () {
+    var poll;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db.get("polls").find({ id: id })];
+            case 1:
+                poll = _a.sent();
+                return [4 /*yield*/, poll.get("votes").push(vote.json()).write()];
+            case 2:
+                _a.sent();
+                return [2 /*return*/];
+        }
     });
-}
-exports.addVote = addVote;
+}); };
