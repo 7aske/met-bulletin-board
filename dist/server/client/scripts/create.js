@@ -40,15 +40,25 @@ var templateControlsToggler = document.querySelector("#navbar-toggler");
 var templateContainer = document.querySelector("#template-container");
 var templateType = document.querySelector("#template-type");
 var templateBgInp = document.querySelector("#template-background");
+var templatePollControlCont = document.querySelector("#template-poll-controls");
+var btnAddOption = document.querySelector("#btn-add-option");
+var templatePollOptionCont = document.querySelector("#poll-option-container");
+var templatePollOptionInp = document.querySelector("#poll-option-input");
+var pollAnchor = document.querySelector("#poll-anchor");
 var templateTextControlCheck = document.querySelector("#template-text-checkbox");
 var templateTextControlCont = document.querySelector("#template-text-controls");
 var templateTextControlInp = document.querySelector("#template-text-controls textarea");
+var templateTextHeadInp = document.querySelector("#template-head-content");
 var templateTextControlSize = document.querySelector("#template-text-size");
 var templateTextControlPosition = document.querySelector("#template-text-position");
 var textJumbotron = document.querySelector(".jumbotron");
 var textJumbotronHeader = document.querySelector(".jumbotron h3");
 var textJumbotronContent = document.querySelector(".jumbotron p");
 var submitBtn = document.querySelector("#submit-btn");
+var state = {
+    pollOptions: [],
+    currentTemplate: "blank",
+};
 templateContainer.addEventListener("click", function () {
     var ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
     if (ariaExpanded.value != "false") {
@@ -92,6 +102,7 @@ templateTextControlCheck.addEventListener("change", function () {
 });
 templateTextControlSize.addEventListener("mousemove", function () {
     textJumbotronContent.style.fontSize = templateTextControlSize.value + "px";
+    pollAnchor.style.fontSize = templateTextControlSize.value + "px";
     textJumbotronHeader.style.fontSize = (parseInt(templateTextControlSize.value) + 24) + "px";
 });
 templateTextControlPosition.addEventListener("mousemove", function () {
@@ -100,9 +111,55 @@ templateTextControlPosition.addEventListener("mousemove", function () {
 templateTextControlInp.addEventListener("keyup", function () {
     textJumbotronContent.innerText = templateTextControlInp.value;
 });
+templateTextHeadInp.addEventListener("keyup", function () {
+    textJumbotronHeader.innerText = templateTextHeadInp.value;
+});
 templateType.addEventListener("change", function () {
+    var val = templateType.value;
+    switch (val) {
+        case "poll":
+            templatePollControlCont.classList.remove("d-none");
+            state.currentTemplate = "poll";
+            templateTextControlCheck.click();
+            break;
+        case "blank":
+            templatePollControlCont.classList.add("d-none");
+            state.currentTemplate = "blank";
+            break;
+        case "upload":
+            templatePollControlCont.classList.add("d-none");
+            state.currentTemplate = "upload";
+            break;
+        default:
+            templatePollControlCont.classList.add("d-none");
+            state.currentTemplate = "blank";
+    }
     console.log(templateType.value);
 });
+btnAddOption.addEventListener("click", function () {
+    var val = templatePollOptionInp.value.trim();
+    if (val != "") {
+        state.pollOptions.push(val);
+        templatePollOptionCont.innerHTML += optionListTemplate(val);
+        templatePollOptionInp.value = "";
+        renderPoll();
+    }
+});
+var pollTemplate = function (opt, i) {
+    return "<li class=\"list-group-item bg-transparent text-dark\" style=\"cursor: pointer;\" onclick=\"vote('" + opt + "', " + i + ")\">" + opt + "</li>";
+};
+var renderPoll = function () {
+    if (state.currentTemplate == "poll") {
+        pollAnchor.innerHTML = "";
+        state.pollOptions.forEach(function (p, i) {
+            pollAnchor.innerHTML += pollTemplate(p, i);
+        });
+    }
+};
+var optionListTemplate = function (opt) {
+    var len = state.pollOptions.length;
+    return "<div class=\"row\" id=\"opt-" + (len - 1) + "\">\n\t\t\t<div class=\"col-10\"><b>" + len + ". " + opt + "</b></div>\n\t\t\t<div class=\"col-2\"><button type=\"button\" onclick=\"(function (opt) {\n\t\t\t\tdocument.querySelector('#opt-" + (len - 1) + "').remove();\n\t\t\t    state.pollOptions = state.pollOptions.filter(o => {\n\t\t\t    \treturn o !== opt;\n\t\t\t    });\n\t\t\t})('" + opt + "')\" class=\"btn text-light font-weight-bold\" style=\"margin-top: -6px\">&times;</button></div>\n\t\t\t</div>";
+};
 submitBtn.addEventListener("click", function () { return __awaiter(_this, void 0, void 0, function () {
     var content, url, response, json;
     return __generator(this, function (_a) {

@@ -28,15 +28,47 @@
 					<option value="upload">Upload HTML</option>
 				</select>
 			</div>
+
 			<div class="custom-control custom-checkbox mb-1">
 				<input type="checkbox" class="custom-control-input" id="template-text-checkbox">
 				<label class="custom-control-label" for="template-text-checkbox">Text</label>
 			</div>
+
+			<!--BG CONTROLS START-->
 			<div class="custom-file mb-2">
 				<input type="file" class="custom-file-input" name="template-background" id="template-background">
 				<label class="custom-file-label" for="template-background">Background image</label>
 			</div>
+			<!--BG CONTROLS END-->
+
+			<!--POLL CONTROLS START-->
+			<div id="template-poll-controls" class="d-none mb-2">
+				<hr>
+				<div id="poll-option-container" class="pb-2">
+
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<div class="input-group input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text">Option</span>
+							</div>
+							<input type="text" class="form-control" placeholder="Enter an option"
+							       id="poll-option-input">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<button type="button" class="btn btn-info" id="btn-add-option">Add</button>
+					</div>
+				</div>
+			</div>
+			<!--POLL CONTROLS END-->
+
+			<!--TEXT CONTROLS START-->
 			<div id="template-text-controls" class="d-none">
+				<hr>
 				<div class="input-group input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">Title</span>
@@ -60,18 +92,26 @@
 					       id="template-text-position">
 				</div>
 			</div>
-			<button type="button" id="submit-btn" class="btn btn-success">Confirm</button>
+			<!--TEXT CONTROLS END-->
+			<hr>
+			<div class="row mt-3">
+				<div class="col-12">
+					<button type="button" id="submit-btn" class="btn btn-success">Confirm</button>
+				</div>
+			</div>
 		</div>
 	</nav>
 	<div id="template-container">
 		<section class="overflow-hidden" style="background-repeat: no-repeat;background-size: 100%;height: 100%;">
 			<div class="jumbotron jumbotron-fluid position-relative p-3 d-none"
-			     style="top:75%; background-color: rgba(255,255,255,0.75)">
+			     style="top:75%; background-color: rgba(255,255,255,0.9)">
 				<div class="container">
 					<h3 class="display-4" style="font-size: 44px">Title</h3>
-					<p class="lead" style="font-size: 20px">Enter text</p>
+					<p class="lead" style="font-size: 20px;">Enter text</p>
+					<ul id="poll-anchor" style="font-size: 20px;" class="list-group list-group-flush"></ul>
 				</div>
 			</div>
+
 		</section>
 	</div>
 </main>
