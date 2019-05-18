@@ -34,66 +34,91 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var electron_1 = require("electron");
+var dotenv_1 = __importDefault(require("dotenv"));
 var child_process_1 = require("child_process");
 var path_1 = require("path");
 var fs_1 = require("fs");
 var initDatabase_1 = require("./database/initDatabase");
 exports.INDEX = path_1.resolve(process.cwd(), "dist/renderer/views/index.html");
 exports.TEMPLATES_DIR = path_1.resolve(process.cwd(), "templates");
-var server = null;
-var db = null;
+exports.CONFIG_DIR = path_1.resolve(process.cwd(), "config/config.cfg");
 var temp_index = 0;
+var db = null;
+var server = null;
 var window = null;
-exports.templates = fs_1.readdirSync(exports.TEMPLATES_DIR)
-    .filter(function (dir) { return dir.endsWith(".html"); })
-    .map(function (dir) { return path_1.resolve(exports.TEMPLATES_DIR, dir); });
-function close() {
+exports.templates = [];
+var main = function () { return __awaiter(_this, void 0, void 0, function () {
+    var slideshowInterval, updateTempates;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                initConfig();
+                return [4 /*yield*/, initDatabase_1.initDatabase()];
+            case 1:
+                db = _a.sent();
+                exports.templates = readTemplates();
+                server = startServer();
+                window = new electron_1.BrowserWindow({
+                    width: 1440,
+                    height: 900,
+                    darkTheme: true,
+                    title: "Metropolitan Bulletin Board",
+                });
+                // window.setMenu(null);
+                window.loadFile(exports.INDEX);
+                slideshowInterval = setInterval(changeSlide, 2000);
+                updateTempates = setInterval(function () { return exports.templates = readTemplates(); }, 2000);
+                window.on("ready-to-show", window.show);
+                return [2 /*return*/];
+        }
+    });
+}); };
+var readTemplates = function () {
+    return fs_1.readdirSync(exports.TEMPLATES_DIR)
+        .filter(function (dir) { return dir.endsWith(".html"); })
+        .map(function (dir) { return path_1.resolve(exports.TEMPLATES_DIR, dir); });
+};
+var close = function () {
     if (server != null)
         server.kill("SIGKILL");
     electron_1.app.exit(0);
     process.exit(0);
-}
-function startServer() {
+};
+var startServer = function () {
     return child_process_1.spawn("node", ["dist/server/server.js"], { stdio: "inherit" });
-}
-function main() {
-    return __awaiter(this, void 0, void 0, function () {
-        var slideshowInterval;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, initDatabase_1.initDatabase()];
-                case 1:
-                    db = _a.sent();
-                    // await addVote(db, "e4S1v_j_o", new Vote("choice1", "3365"));
-                    // await addPoll(db, new Poll(["choice 1", "choice 2"], new Date()));
-                    server = startServer();
-                    window = new electron_1.BrowserWindow({
-                        width: 1440,
-                        height: 900,
-                        darkTheme: true,
-                        title: "Metropolitan Bulletin Board"
-                    });
-                    // window.setMenu(null);
-                    window.loadFile(exports.INDEX);
-                    slideshowInterval = setInterval(changeSlide, 2000);
-                    window.on("ready-to-show", window.show);
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-function changeSlide() {
+};
+var initConfig = function () {
+    if (!fs_1.existsSync(exports.TEMPLATES_DIR)) {
+        fs_1.mkdirSync(exports.TEMPLATES_DIR, { recursive: true });
+    }
+    if (!fs_1.existsSync(exports.TEMPLATES_DIR)) {
+        fs_1.mkdirSync(exports.TEMPLATES_DIR, { recursive: true });
+    }
+    if (dotenv_1.default.config({ path: exports.CONFIG_DIR }).error)
+        throw "Invalid config";
+};
+var changeSlide = function () {
     var template = path_1.resolve(exports.TEMPLATES_DIR, exports.templates[temp_index]);
-    window.webContents.send("change-template", template);
+    var td = { template: fs_1.readFileSync(template), index: temp_index, total: exports.templates.length };
+    window.webContents.send("template-set", td);
     temp_index++;
     temp_index = temp_index == exports.templates.length ? 0 : temp_index;
-}
-// function changeSlide() {
-// 	window.loadFile(resolve(TEMPLATES_DIR, templates[temp_index]));
-// 	temp_index++;
-// 	temp_index = temp_index == templates.length ? 0 : temp_index;
-// }
+};
+electron_1.ipcMain.on("template-get", function (event, data) {
+    var td = {
+        template: fs_1.readFileSync(exports.templates[data]),
+        index: data,
+        total: exports.templates.length,
+    };
+    temp_index = ++data;
+    temp_index = temp_index == exports.templates.length ? 0 : temp_index;
+    event.sender.send("template-set", td);
+});
 electron_1.app.on("ready", main);
 electron_1.app.on("window-all-closed", close);

@@ -3,11 +3,10 @@ import dotenv from "dotenv";
 import router from "./router";
 import { resolve } from "path";
 
-const result = dotenv.config({path: resolve(process.cwd(), "config/.env")});
-
-if (result.error) {
+const result = dotenv.config({path: resolve(process.cwd(), "config/config.cfg")});
+if (result.error)
 	throw result.error;
-}
+
 const server: express.Application = express();
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;

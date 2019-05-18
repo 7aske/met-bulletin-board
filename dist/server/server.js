@@ -7,10 +7,9 @@ var express_1 = __importDefault(require("express"));
 var dotenv_1 = __importDefault(require("dotenv"));
 var router_1 = __importDefault(require("./router"));
 var path_1 = require("path");
-var result = dotenv_1.default.config({ path: path_1.resolve(process.cwd(), "config/.env") });
-if (result.error) {
+var result = dotenv_1.default.config({ path: path_1.resolve(process.cwd(), "config/config.cfg") });
+if (result.error)
     throw result.error;
-}
 var server = express_1.default();
 var PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 server.use("/", router_1.default);
