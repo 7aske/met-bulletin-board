@@ -10,7 +10,7 @@ body, html {
 
 body {
   background-color: #a70532;
-  background-image: url("../images/default.png");
+  background-image: url("../images/default-bg.png");
   background-position: center;
   background-size: 100%;
   background-attachment: fixed;
@@ -45,7 +45,4 @@ header .active {
 main {
   height: 90vh;
   overflow: hidden;
-}
-main iframe, main section {
-  height: 100%;
 }

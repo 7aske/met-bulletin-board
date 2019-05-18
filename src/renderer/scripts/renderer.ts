@@ -1,8 +1,7 @@
 import { ipcRenderer } from "electron";
 
 const indicatorContainer = document.querySelector("#indicator-container") as HTMLDivElement;
-const frame = document.querySelector("iframe") as HTMLIFrameElement;
-const section = document.querySelector("main section") as HTMLDivElement;
+const section = document.querySelector("main") as HTMLDivElement;
 
 indicatorContainer.addEventListener("click", ev => {
 	const event: MouseEvent = ev as MouseEvent;
@@ -18,6 +17,13 @@ indicatorContainer.addEventListener("click", ev => {
 	}
 });
 
+
+window.onload = () => {
+	ipcRenderer.send("template-get", 0);
+};
+ipcRenderer.on("template-reset", (event:any, data:any)=>{
+	section.innerHTML = "";
+});
 ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 	section.innerHTML = data.template.toString();
 	let len = indicatorContainer.children.length;
@@ -28,7 +34,10 @@ ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 			indicatorContainer.appendChild(div);
 		}
 	} else if (len > data.total) {
-		indicatorContainer.lastElementChild.remove();
+		while(len > data.total){
+			indicatorContainer.lastElementChild.remove();
+			len--;
+		}
 	}
 	indicatorContainer.querySelectorAll(".indicator").forEach((e, i) => {
 

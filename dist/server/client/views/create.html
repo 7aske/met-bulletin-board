@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="stylesheet" href="../../../../node_modules/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="../stylesheets/create.css">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Template Creator</title>
+</head>
+<body>
+<main>
+	<nav class="navbar navbar-expand-xxl navbar-dark">
+		<img class="navbar-brand" src="../images/metropolitan-logo.png">
+		<button class="navbar-toggler" id="navbar-toggler" type="button" data-target="#navbar-template-controls"
+		        aria-controls="navbar-template-controls" aria-expanded="true" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse col-lg-4 col-md-12 show" id="navbar-template-controls">
+			<div class="input-group mb-1">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="template-type">Type</label>
+				</div>
+				<select class="custom-select" id="template-type">
+					<option value="blank">Blank Template</option>
+					<option value="poll">Poll</option>
+					<option value="upload">Upload HTML</option>
+				</select>
+			</div>
+			<div class="custom-control custom-checkbox mb-1">
+				<input type="checkbox" class="custom-control-input" id="template-text-checkbox">
+				<label class="custom-control-label" for="template-text-checkbox">Text</label>
+			</div>
+			<div class="custom-file mb-2">
+				<input type="file" class="custom-file-input" name="template-background" id="template-background">
+				<label class="custom-file-label" for="template-background">Background image</label>
+			</div>
+			<div id="template-text-controls" class="d-none">
+				<div class="input-group input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Title</span>
+					</div>
+					<input type="text" class="form-control" value="Title" placeholder="Enter a title"
+					       id="template-head-content">
+				</div>
+				<div class="form-group">
+						<textarea class="form-control" id="template-text-content" rows="3"
+						          placeholder="Text">Enter text</textarea>
+				</div>
+				<div class="form-group d-flex justify-content-between">
+					<label for="template-text-size">Size:</label>
+					<input max="72" min="8" value="20" step="1" type="range"
+					       class="form-control-range custom-range w-75" id="template-text-size">
+				</div>
+				<div class="form-group d-flex justify-content-between">
+					<label for="template-text-position">Position:</label>
+					<input max="100" min="0" value="75" step="1" type="range"
+					       class="form-control-range custom-range w-75"
+					       id="template-text-position">
+				</div>
+			</div>
+			<button type="button" id="submit-btn" class="btn btn-success">Confirm</button>
+		</div>
+	</nav>
+	<div id="template-container">
+		<section class="overflow-hidden" style="background-repeat: no-repeat;background-size: 100%;height: 100%;">
+			<div class="jumbotron jumbotron-fluid position-relative p-3 d-none"
+			     style="top:75%; background-color: rgba(255,255,255,0.75)">
+				<div class="container">
+					<h3 class="display-4" style="font-size: 44px">Title</h3>
+					<p class="lead" style="font-size: 20px">Enter text</p>
+				</div>
+			</div>
+		</section>
+	</div>
+</main>
+<script src="../scripts/create.js"></script>
+</body>
+</html>

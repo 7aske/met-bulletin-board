@@ -1,0 +1,29 @@
+$bg-color: #a70532;
+
+main {
+	width: 100vw;
+	nav {
+		img{
+			height: 100%;
+		}
+		background-color: $bg-color;
+		position: relative;
+		z-index: 10;
+		height: 10vh;
+		color: #ffffff;
+		#navbar-template-controls {
+			height: 90vh;
+			position: absolute;
+			top: 10vh;
+			left: 0;
+			padding: 10px;
+			background-color: $bg-color;
+			color: #ffffff;
+			box-sizing: border-box;
+		}
+	}
+
+	#template-container {
+		height: 90vh;
+	}
+}

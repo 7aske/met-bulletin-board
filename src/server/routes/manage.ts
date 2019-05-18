@@ -1,5 +1,10 @@
-import { Request, Response } from "express";
+import { Router, Request, Response } from "express";
 
-export const manage = (req: Request, res: Response) => {
+const manage = Router();
+
+
+manage.get("/", (req: Request, res: Response) => {
 	res.send("MANAGE");
-};
+});
+
+export default manage;

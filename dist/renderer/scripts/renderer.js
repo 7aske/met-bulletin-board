@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var electron_1 = require("electron");
 var indicatorContainer = document.querySelector("#indicator-container");
-var frame = document.querySelector("iframe");
-var section = document.querySelector("main section");
+var section = document.querySelector("main");
 indicatorContainer.addEventListener("click", function (ev) {
     var event = ev;
     var element = document.elementFromPoint(event.x, event.y);
@@ -17,6 +16,12 @@ indicatorContainer.addEventListener("click", function (ev) {
         }
     }
 });
+window.onload = function () {
+    electron_1.ipcRenderer.send("template-get", 0);
+};
+electron_1.ipcRenderer.on("template-reset", function (event, data) {
+    section.innerHTML = "";
+});
 electron_1.ipcRenderer.on("template-set", function (event, data) {
     section.innerHTML = data.template.toString();
     var len = indicatorContainer.children.length;
@@ -28,7 +33,10 @@ electron_1.ipcRenderer.on("template-set", function (event, data) {
         }
     }
     else if (len > data.total) {
-        indicatorContainer.lastElementChild.remove();
+        while (len > data.total) {
+            indicatorContainer.lastElementChild.remove();
+            len--;
+        }
     }
     indicatorContainer.querySelectorAll(".indicator").forEach(function (e, i) {
         var element = e;
