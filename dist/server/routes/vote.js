@@ -36,20 +36,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addVote = function (db, id, vote) { return __awaiter(_this, void 0, void 0, function () {
-    var polls, poll;
+var express_1 = require("express");
+var http2_1 = require("http2");
+var initDatabase_1 = require("../../main/database/initDatabase");
+var Vote_1 = require("../../main/database/schema/Vote");
+var voteActions_1 = require("../../main/database/actions/voteActions");
+var vote = express_1.Router();
+vote.get("/", function (req, res) {
+    res.status(http2_1.constants.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({ status: "UNAUTHORIZED" }));
+});
+vote.post("/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var id, choice, voteIndex, studentIndex, db, newVote;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, db.get("polls")];
+            case 0:
+                console.log(req.body);
+                id = req.params["id"];
+                choice = req.body["vote"];
+                voteIndex = req.body["id"];
+                studentIndex = req.body["index"];
+                return [4 /*yield*/, initDatabase_1.initDatabase()];
             case 1:
-                polls = _a.sent();
-                return [4 /*yield*/, polls.find({ id: id })];
+                db = _a.sent();
+                newVote = new Vote_1.Vote(choice, studentIndex, voteIndex);
+                return [4 /*yield*/, voteActions_1.addVote(db, id, newVote)];
             case 2:
-                poll = _a.sent();
-                return [4 /*yield*/, poll.get("votes").push(vote.json()).write()];
-            case 3:
                 _a.sent();
+                res.status(http2_1.constants.HTTP_STATUS_OK).send(JSON.stringify({ status: "OK" }));
                 return [2 /*return*/];
         }
     });
-}); };
+}); });
+exports.default = vote;

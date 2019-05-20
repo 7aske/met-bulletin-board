@@ -1,9 +1,10 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import dotenv from "dotenv";
 import { ChildProcess, spawn } from "child_process";
-import { resolve } from "path";
+import { basename, extname, resolve } from "path";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { initDatabase } from "./database/initDatabase";
+import { pathToFileURL } from "url";
 
 export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
 export const TEMPLATES_DIR = resolve(process.cwd(), "templates");
@@ -74,12 +75,18 @@ const readTemplates = () => {
 
 const changeSlide = () => {
 	const tmp_len = templates.length;
-	if (tmp_len > 0 ) {
+	if (tmp_len > 0) {
 		if (temp_index < tmp_len) {
 			const currTemplate = templates[temp_index];
 			const template = resolve(TEMPLATES_DIR, currTemplate);
 			if (existsSync(template)) {
-				const td: TemplateDataType = {template: readFileSync(template), index: temp_index, total: tmp_len};
+				const filename = basename(template);
+				const td: TemplateDataType = {
+					template: readFileSync(template),
+					index: temp_index,
+					total: tmp_len,
+					id: basename(filename, extname(filename)),
+				};
 				window.webContents.send("template-set", td);
 				temp_index = ++temp_index == tmp_len ? 0 : temp_index;
 			}
@@ -88,7 +95,12 @@ const changeSlide = () => {
 			const currTemplate = templates[temp_index];
 			const template = resolve(TEMPLATES_DIR, currTemplate);
 			if (existsSync(template)) {
-				const td: TemplateDataType = {template: readFileSync(template), index: temp_index, total: tmp_len};
+				const td: TemplateDataType = {
+					template: readFileSync(template),
+					index: temp_index,
+					total: tmp_len,
+					id: "",
+				};
 				window.webContents.send("template-set", td);
 				temp_index = ++temp_index == tmp_len ? 0 : temp_index;
 			}
@@ -100,11 +112,14 @@ const changeSlide = () => {
 
 ipcMain.on("template-get", (event: any, data: any) => {
 	if (data < templates.length) {
-		if (existsSync(templates[data])) {
+		const template = templates[data];
+		if (existsSync(template)) {
+			const filename = basename(template);
 			const td: TemplateDataType = {
 				template: readFileSync(templates[data]),
 				index: data,
 				total: templates.length,
+				id: basename(filename, extname(filename))
 			};
 			temp_index = ++data == templates.length ? 0 : data;
 			event.sender.send("template-set", td);

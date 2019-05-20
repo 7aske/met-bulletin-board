@@ -34,22 +34,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.addVote = function (db, id, vote) { return __awaiter(_this, void 0, void 0, function () {
-    var polls, poll;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, db.get("polls")];
-            case 1:
-                polls = _a.sent();
-                return [4 /*yield*/, polls.find({ id: id })];
-            case 2:
-                poll = _a.sent();
-                return [4 /*yield*/, poll.get("votes").push(vote.json()).write()];
-            case 3:
-                _a.sent();
-                return [2 /*return*/];
-        }
+function vote(e, a, b) {
+    return __awaiter(this, void 0, void 0, function () {
+        var target, url, resp, json;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    target = event.target;
+                    url = "http://127.0.0.1:5000/vote/" + target.parentElement.attributes.getNamedItem("data-id").value;
+                    return [4 /*yield*/, fetch(url, {
+                            headers: new Headers({ "Content-Type": "application/x-www-form-urlencoded", "Access-Control-Allow-Origin": "*" }),
+                            method: "POST",
+                            body: "vote=" + a + "&id=" + b + "&index=" + 3333,
+                        })];
+                case 1:
+                    resp = _a.sent();
+                    return [4 /*yield*/, resp.json()];
+                case 2:
+                    json = _a.sent();
+                    console.log(json);
+                    return [2 /*return*/];
+            }
+        });
     });
-}); };
+}

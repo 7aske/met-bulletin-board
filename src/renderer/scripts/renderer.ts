@@ -21,11 +21,15 @@ indicatorContainer.addEventListener("click", ev => {
 window.onload = () => {
 	ipcRenderer.send("template-get", 0);
 };
-ipcRenderer.on("template-reset", (event:any, data:any)=>{
+ipcRenderer.on("template-reset", (event: any, data: any) => {
 	section.innerHTML = "";
 });
 ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 	section.innerHTML = data.template.toString();
+	const pollAnchor = document.querySelector("#poll-anchor");
+	if (pollAnchor != undefined) {
+		pollAnchor.setAttribute("data-id", data.id);
+	}
 	let len = indicatorContainer.children.length;
 	if (len < data.total) {
 		for (let i = 0; i < data.total - len; i++) {
@@ -34,7 +38,7 @@ ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 			indicatorContainer.appendChild(div);
 		}
 	} else if (len > data.total) {
-		while(len > data.total){
+		while (len > data.total) {
 			indicatorContainer.lastElementChild.remove();
 			len--;
 		}
@@ -49,5 +53,3 @@ ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 		}
 	});
 });
-
-

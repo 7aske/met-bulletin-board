@@ -113,7 +113,13 @@ var changeSlide = function () {
             var currTemplate = exports.templates[temp_index];
             var template = path_1.resolve(exports.TEMPLATES_DIR, currTemplate);
             if (fs_1.existsSync(template)) {
-                var td = { template: fs_1.readFileSync(template), index: temp_index, total: tmp_len };
+                var filename = path_1.basename(template);
+                var td = {
+                    template: fs_1.readFileSync(template),
+                    index: temp_index,
+                    total: tmp_len,
+                    id: path_1.basename(filename, path_1.extname(filename)),
+                };
                 window.webContents.send("template-set", td);
                 temp_index = ++temp_index == tmp_len ? 0 : temp_index;
             }
@@ -123,7 +129,12 @@ var changeSlide = function () {
             var currTemplate = exports.templates[temp_index];
             var template = path_1.resolve(exports.TEMPLATES_DIR, currTemplate);
             if (fs_1.existsSync(template)) {
-                var td = { template: fs_1.readFileSync(template), index: temp_index, total: tmp_len };
+                var td = {
+                    template: fs_1.readFileSync(template),
+                    index: temp_index,
+                    total: tmp_len,
+                    id: "",
+                };
                 window.webContents.send("template-set", td);
                 temp_index = ++temp_index == tmp_len ? 0 : temp_index;
             }
@@ -135,11 +146,14 @@ var changeSlide = function () {
 };
 electron_1.ipcMain.on("template-get", function (event, data) {
     if (data < exports.templates.length) {
-        if (fs_1.existsSync(exports.templates[data])) {
+        var template = exports.templates[data];
+        if (fs_1.existsSync(template)) {
+            var filename = path_1.basename(template);
             var td = {
                 template: fs_1.readFileSync(exports.templates[data]),
                 index: data,
                 total: exports.templates.length,
+                id: path_1.basename(filename, path_1.extname(filename))
             };
             temp_index = ++data == exports.templates.length ? 0 : data;
             event.sender.send("template-set", td);

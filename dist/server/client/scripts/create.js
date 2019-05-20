@@ -146,7 +146,7 @@ btnAddOption.addEventListener("click", function () {
     }
 });
 var pollTemplate = function (opt, i) {
-    return "<li class=\"list-group-item bg-transparent text-dark\" style=\"cursor: pointer;\" onclick=\"vote('" + opt + "', " + i + ")\">" + opt + "</li>";
+    return "<li class=\"list-group-item bg-transparent text-dark\" style=\"cursor: pointer;\" onclick=\"vote(event, '" + opt + "', " + i + ")\">" + opt + "</li>";
 };
 var renderPoll = function () {
     if (state.currentTemplate == "poll") {
@@ -161,14 +161,15 @@ var optionListTemplate = function (opt) {
     return "<div class=\"row\" id=\"opt-" + (len - 1) + "\">\n\t\t\t<div class=\"col-10\"><b>" + len + ". " + opt + "</b></div>\n\t\t\t<div class=\"col-2\"><button type=\"button\" onclick=\"(function (opt) {\n\t\t\t\tdocument.querySelector('#opt-" + (len - 1) + "').remove();\n\t\t\t    state.pollOptions = state.pollOptions.filter(o => {\n\t\t\t    \treturn o !== opt;\n\t\t\t    });\n\t\t\t})('" + opt + "')\" class=\"btn text-light font-weight-bold\" style=\"margin-top: -6px\">&times;</button></div>\n\t\t\t</div>";
 };
 submitBtn.addEventListener("click", function () { return __awaiter(_this, void 0, void 0, function () {
-    var content, url, response, json;
+    var content, choices, url, response, json;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 content = templateContainer.innerHTML.replace(/[\t]/g, "");
+                choices = state.pollOptions;
                 url = window.location.origin + "/create";
                 return [4 /*yield*/, fetch(url, {
-                        body: JSON.stringify({ content: content }),
+                        body: JSON.stringify({ content: content, choices: choices }),
                         method: "post",
                         headers: new Headers({ "Content-Type": "application/json" }),
                     })];

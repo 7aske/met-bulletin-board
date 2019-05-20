@@ -24,6 +24,10 @@ electron_1.ipcRenderer.on("template-reset", function (event, data) {
 });
 electron_1.ipcRenderer.on("template-set", function (event, data) {
     section.innerHTML = data.template.toString();
+    var pollAnchor = document.querySelector("#poll-anchor");
+    if (pollAnchor != undefined) {
+        pollAnchor.setAttribute("data-id", data.id);
+    }
     var len = indicatorContainer.children.length;
     if (len < data.total) {
         for (var i = 0; i < data.total - len; i++) {

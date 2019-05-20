@@ -1,17 +1,19 @@
 import { VoteType } from "../../../@types/Vote";
-import shortid = require("shortid");
+import shortid from "shortid";
 
 export class Vote implements VoteType {
 	private _choice: string;
 	private _dateVoted: Date;
 	private _id: string;
-	private _index: string;
+	private _voteIndex: number;
+	private _studentIndex: string;
 
-	constructor(choice: string, index: string) {
-		this._choice = choice;
-		this._dateVoted = new Date();
+	constructor(choice: string, studentIndex: string, voteIndex: number) {
 		this._id = shortid.generate();
-		this._index = index;
+		this._choice = choice;
+		this._voteIndex = voteIndex;
+		this._studentIndex = studentIndex;
+		this._dateVoted = new Date();
 	}
 
 	get choice(): string {
@@ -38,20 +40,29 @@ export class Vote implements VoteType {
 		this._id = value;
 	}
 
-	get index(): string {
-		return this._index;
+	get voteIndex(): number {
+		return this._voteIndex;
 	}
 
-	set index(value: string) {
-		this._index = value;
+	set voteIndex(value: number) {
+		this._voteIndex = value;
+	}
+
+	get studentIndex(): string {
+		return this._studentIndex;
+	}
+
+	set studentIndex(value: string) {
+		this._studentIndex = value;
 	}
 
 	json(): VoteType {
 		return {
+			studentIndex: this._studentIndex,
 			choice: this._choice,
 			dateVoted: this._dateVoted,
 			id: this._id,
-			index: this._index,
+			voteIndex: this._voteIndex
 		};
 	}
 }

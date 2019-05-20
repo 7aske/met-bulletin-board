@@ -125,7 +125,7 @@ btnAddOption.addEventListener("click", () => {
 });
 
 const pollTemplate = (opt: string, i: number): string => {
-	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;" onclick="vote('${opt}', ${i})">${opt}</li>`;
+	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;" onclick="vote(event, '${opt}', ${i})">${opt}</li>`;
 };
 
 const renderPoll = () => {
@@ -154,9 +154,10 @@ const optionListTemplate = (opt: string): string => {
 
 submitBtn.addEventListener("click", async () => {
 	const content = templateContainer.innerHTML.replace(/[\t]/g, "");
+	const choices = state.pollOptions;
 	const url = window.location.origin + "/create";
 	const response = await fetch(url, {
-		body: JSON.stringify({content}),
+		body: JSON.stringify({content, choices}),
 		method: "post",
 		headers: new Headers({"Content-Type": "application/json"}),
 	});
