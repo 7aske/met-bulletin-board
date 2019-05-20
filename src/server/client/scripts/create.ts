@@ -96,20 +96,29 @@ templateType.addEventListener("change", () => {
 		case "poll":
 			templatePollControlCont.classList.remove("d-none");
 			state.currentTemplate = "poll";
-			templateTextControlCheck.click();
+			if (!templateTextControlCheck.checked) {
+				templateTextControlCheck.click();
+			}
+			renderOptionTemplates();
+			renderPollTemplates();
 			break;
 		case "blank":
 			templatePollControlCont.classList.add("d-none");
 			state.currentTemplate = "blank";
+			if (templateTextControlCheck.checked) {
+				templateTextControlCheck.click();
+			}
+			clearPoll();
 			break;
 		case "upload":
 			templatePollControlCont.classList.add("d-none");
 			state.currentTemplate = "upload";
+			clearPoll();
 			break;
 		default:
 			templatePollControlCont.classList.add("d-none");
 			state.currentTemplate = "blank";
-
+			clearPoll();
 	}
 	console.log(templateType.value);
 
@@ -118,9 +127,9 @@ btnAddOption.addEventListener("click", () => {
 	const val = templatePollOptionInp.value.trim();
 	if (val != "") {
 		state.pollOptions.push(val);
-		templatePollOptionCont.innerHTML += optionListTemplate(val);
+		renderOptionTemplates();
+		renderPollTemplates();
 		templatePollOptionInp.value = "";
-		renderPoll();
 	}
 });
 
@@ -128,30 +137,44 @@ const pollTemplate = (opt: string, i: number): string => {
 	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;" onclick="vote(event, '${opt}', ${i})">${opt}</li>`;
 };
 
-const renderPoll = () => {
+
+const renderPollTemplates = () =>{
 	if (state.currentTemplate == "poll") {
 		pollAnchor.innerHTML = "";
 		(state.pollOptions as string[]).forEach((p, i) => {
-			pollAnchor.innerHTML += pollTemplate(p, i);
+			pollAnchor.innerHTML += pollTemplate(p, i + 1);
 		});
 	}
-
 };
 
+const renderOptionTemplates = () => {
+	if (state.currentTemplate == "poll") {
+		templatePollOptionCont.innerHTML = "";
+		(state.pollOptions as string[]).forEach((p, i) => {
+			templatePollOptionCont.innerHTML += optionTemplate(p, i + 1);
+		});
+	}
+};
 
-const optionListTemplate = (opt: string): string => {
-	const len = state.pollOptions.length;
+const optionTemplate = (opt: string, len: number): string => {
 	return `<div class="row" id="opt-${len - 1}">
 			<div class="col-10"><b>${len}. ${opt}</b></div>
 			<div class="col-2"><button type="button" onclick="(function (opt) {
-				document.querySelector('#opt-${len - 1}').remove();
 			    state.pollOptions = state.pollOptions.filter(o => {
 			    	return o !== opt;
 			    });
+			    renderOptionTemplates();
+			    renderPollTemplates();
 			})('${opt}')" class="btn text-light font-weight-bold" style="margin-top: -6px">&times;</button></div>
 			</div>`;
 };
 
+const clearPoll = () => {
+	if (state.currentTemplate != "poll") {
+		pollAnchor.innerHTML = "";
+		templatePollOptionCont.innerHTML = "";
+	}
+};
 submitBtn.addEventListener("click", async () => {
 	const content = templateContainer.innerHTML.replace(/[\t]/g, "");
 	const choices = state.pollOptions;

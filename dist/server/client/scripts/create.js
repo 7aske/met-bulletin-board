@@ -120,19 +120,29 @@ templateType.addEventListener("change", function () {
         case "poll":
             templatePollControlCont.classList.remove("d-none");
             state.currentTemplate = "poll";
-            templateTextControlCheck.click();
+            if (!templateTextControlCheck.checked) {
+                templateTextControlCheck.click();
+            }
+            renderOptionTemplates();
+            renderPollTemplates();
             break;
         case "blank":
             templatePollControlCont.classList.add("d-none");
             state.currentTemplate = "blank";
+            if (templateTextControlCheck.checked) {
+                templateTextControlCheck.click();
+            }
+            clearPoll();
             break;
         case "upload":
             templatePollControlCont.classList.add("d-none");
             state.currentTemplate = "upload";
+            clearPoll();
             break;
         default:
             templatePollControlCont.classList.add("d-none");
             state.currentTemplate = "blank";
+            clearPoll();
     }
     console.log(templateType.value);
 });
@@ -140,25 +150,38 @@ btnAddOption.addEventListener("click", function () {
     var val = templatePollOptionInp.value.trim();
     if (val != "") {
         state.pollOptions.push(val);
-        templatePollOptionCont.innerHTML += optionListTemplate(val);
+        renderOptionTemplates();
+        renderPollTemplates();
         templatePollOptionInp.value = "";
-        renderPoll();
     }
 });
 var pollTemplate = function (opt, i) {
     return "<li class=\"list-group-item bg-transparent text-dark\" style=\"cursor: pointer;\" onclick=\"vote(event, '" + opt + "', " + i + ")\">" + opt + "</li>";
 };
-var renderPoll = function () {
+var renderPollTemplates = function () {
     if (state.currentTemplate == "poll") {
         pollAnchor.innerHTML = "";
         state.pollOptions.forEach(function (p, i) {
-            pollAnchor.innerHTML += pollTemplate(p, i);
+            pollAnchor.innerHTML += pollTemplate(p, i + 1);
         });
     }
 };
-var optionListTemplate = function (opt) {
-    var len = state.pollOptions.length;
-    return "<div class=\"row\" id=\"opt-" + (len - 1) + "\">\n\t\t\t<div class=\"col-10\"><b>" + len + ". " + opt + "</b></div>\n\t\t\t<div class=\"col-2\"><button type=\"button\" onclick=\"(function (opt) {\n\t\t\t\tdocument.querySelector('#opt-" + (len - 1) + "').remove();\n\t\t\t    state.pollOptions = state.pollOptions.filter(o => {\n\t\t\t    \treturn o !== opt;\n\t\t\t    });\n\t\t\t})('" + opt + "')\" class=\"btn text-light font-weight-bold\" style=\"margin-top: -6px\">&times;</button></div>\n\t\t\t</div>";
+var renderOptionTemplates = function () {
+    if (state.currentTemplate == "poll") {
+        templatePollOptionCont.innerHTML = "";
+        state.pollOptions.forEach(function (p, i) {
+            templatePollOptionCont.innerHTML += optionTemplate(p, i + 1);
+        });
+    }
+};
+var optionTemplate = function (opt, len) {
+    return "<div class=\"row\" id=\"opt-" + (len - 1) + "\">\n\t\t\t<div class=\"col-10\"><b>" + len + ". " + opt + "</b></div>\n\t\t\t<div class=\"col-2\"><button type=\"button\" onclick=\"(function (opt) {\n\t\t\t    state.pollOptions = state.pollOptions.filter(o => {\n\t\t\t    \treturn o !== opt;\n\t\t\t    });\n\t\t\t    renderOptionTemplates();\n\t\t\t    renderPollTemplates();\n\t\t\t})('" + opt + "')\" class=\"btn text-light font-weight-bold\" style=\"margin-top: -6px\">&times;</button></div>\n\t\t\t</div>";
+};
+var clearPoll = function () {
+    if (state.currentTemplate != "poll") {
+        pollAnchor.innerHTML = "";
+        templatePollOptionCont.innerHTML = "";
+    }
 };
 submitBtn.addEventListener("click", function () { return __awaiter(_this, void 0, void 0, function () {
     var content, choices, url, response, json;
