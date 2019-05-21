@@ -85,18 +85,29 @@ electron_1.ipcRenderer.on("template-reset", () => {
 electron_1.ipcRenderer.on("template-set", (event, data) => {
     store.setState("currentTemplate", data);
 });
-const vote = (id, a, b) => {
-    popupDialog.open("Are you sure?", "Are you sure you want to vote for '" + a + "' ?", () => __awaiter(this, void 0, void 0, function* () {
-        const url = "http://127.0.0.1:5000/vote/" + id;
-        const resp = yield fetch(url, {
-            headers: new Headers({
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Access-Control-Allow-Origin": "*",
-            }),
-            method: "POST",
-            body: `choice=${a}&choiceId=${b}&studentIndex=${3333}`,
-        });
-        const json = yield resp.json();
-        console.log(json);
+const vote = (id, choice, choiceIndex) => {
+    popupDialog.open("Are you sure?", "<div class=\"input-group mb-3\">\n" +
+        "  <div class=\"input-group-prepend\">\n" +
+        "		<span class=\"input-group-text\" for=\"identity-input\">ID: </span>\n" +
+        "	</div>\n" +
+        "	<input type=\"text\" class=\"form-control\" placeholder=\"Username\" aria-label=\"Username\" id= \"identity-input\">\n" +
+        "</div>\n", () => __awaiter(this, void 0, void 0, function* () {
+        const identity = document.querySelector("#identity-input").value;
+        if (identity != "") {
+            const url = "http://127.0.0.1:5000/vote/" + id;
+            const resp = yield fetch(url, {
+                headers: new Headers({
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Access-Control-Allow-Origin": "*",
+                }),
+                method: "POST",
+                body: `choice=${choice}&choiceId=${choiceIndex}&studentIndex=${identity}`,
+            });
+            const json = yield resp.json();
+            console.log(json);
+        }
+        else {
+            popupDialog.open("Warrning", "FirstName.LastName.Index");
+        }
     }));
 };

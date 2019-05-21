@@ -75,28 +75,39 @@ indicatorContainer.addEventListener("click", ev => {
 window.onload = () => {
 	ipcRenderer.send("template-get", 0);
 };
+
 ipcRenderer.on("template-reset", () => {
 	section.innerHTML = "";
 });
+
 ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 	store.setState("currentTemplate", data);
 });
 
-const vote = (id: string, a: string, b: number) => {
-	popupDialog.open("Are you sure?", "Are you sure you want to vote for '" + a + "' ?", async () => {
-		const url = "http://127.0.0.1:5000/vote/" + id;
-		const resp = await fetch(url, {
-			headers: new Headers({
-				"Content-Type": "application/x-www-form-urlencoded",
-				"Access-Control-Allow-Origin": "*",
-			}),
-			method: "POST",
-			body: `choice=${a}&choiceId=${b}&studentIndex=${3333}`,
-		});
-		const json = await resp.json();
-		console.log(json);
+const vote = (id: string, choice: string, choiceIndex: number) => {
+	popupDialog.open("Are you sure?", "<div class=\"input-group mb-3\">\n" +
+		"  <div class=\"input-group-prepend\">\n" +
+		"		<span class=\"input-group-text\" for=\"identity-input\">ID: </span>\n" +
+		"	</div>\n" +
+		"	<input type=\"text\" class=\"form-control\" placeholder=\"Username\" aria-label=\"Username\" id= \"identity-input\">\n" +
+		"</div>\n", async () => {
+		const identity = (<HTMLInputElement>document.querySelector("#identity-input")).value;
+		if (identity != "") {
+			const url = "http://127.0.0.1:5000/vote/" + id;
+			const resp = await fetch(url, {
+				headers: new Headers({
+					"Content-Type": "application/x-www-form-urlencoded",
+					"Access-Control-Allow-Origin": "*",
+				}),
+				method: "POST",
+				body: `choice=${choice}&choiceId=${choiceIndex}&studentIndex=${identity}`,
+			});
+			const json = await resp.json();
+			console.log(json);
+		} else {
+			popupDialog.open("Warrning","FirstName.LastName.Index");
+		}
 	});
-
 };
 
 

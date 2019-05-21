@@ -22,7 +22,7 @@ vote.post("/:pollId", (req, res) => __awaiter(this, void 0, void 0, function* ()
     const pollId = req.params["choiceId"];
     const choice = req.body["choice"];
     const choiceId = req.body["choiceId"];
-    const studentIndex = req.body["studentIndex"];
+    const studentIndex = req.body["studentId"];
     const db = yield initDatabase_1.initDatabase();
     const newVote = new Vote_1.Vote(choice, studentIndex, choiceId);
     yield voteActions_1.addVote(db, pollId, newVote);

@@ -8,8 +8,8 @@ class Vote {
     constructor(choice, studentIndex, voteIndex) {
         this._id = shortid_1.default.generate();
         this._choice = choice;
-        this._voteIndex = voteIndex;
-        this._studentIndex = studentIndex;
+        this._choiceIndex = voteIndex;
+        this._studentId = studentIndex;
         this._dateVoted = new Date();
     }
     get choice() {
@@ -30,25 +30,25 @@ class Vote {
     set id(value) {
         this._id = value;
     }
-    get voteIndex() {
-        return this._voteIndex;
+    get choiceIndex() {
+        return this._choiceIndex;
     }
-    set voteIndex(value) {
-        this._voteIndex = value;
+    set choiceIndex(value) {
+        this._choiceIndex = value;
     }
-    get studentIndex() {
-        return this._studentIndex;
+    get studentId() {
+        return this._studentId;
     }
-    set studentIndex(value) {
-        this._studentIndex = value;
+    set studentId(value) {
+        this._studentId = value;
     }
     json() {
         return {
-            studentIndex: this._studentIndex,
+            studentId: this._studentId,
             choice: this._choice,
             dateVoted: this._dateVoted,
             id: this._id,
-            voteIndex: this._voteIndex
+            choiceIndex: this._choiceIndex
         };
     }
 }

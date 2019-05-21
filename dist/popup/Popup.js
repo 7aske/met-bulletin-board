@@ -77,7 +77,7 @@ class PopupDialog {
 				height: 300px;
 				margin: 20vh auto;}`;
         const rule2 = `#popup-backdrop #popup .card-body {
-			  overflow-y: scroll;}`;
+			  overflow-y: hidden;}`;
         const rule3 = `#popup-backdrop #popup .card-footer {
 			  text-align: right;}`;
         const rule4 = `#popup-backdrop #popup #modalConfirm {

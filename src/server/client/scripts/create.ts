@@ -165,6 +165,7 @@ const updateControls = () => {
 };
 store.subscribe("currentTemplate", [updateControls, renderPollTemplates, renderOptionTemplates]);
 store.subscribe("pollOptions", [renderOptionTemplates, renderPollTemplates]);
+
 templateContainer.addEventListener("click", () => {
 	const ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
 	if (ariaExpanded.value != "false") {
@@ -264,7 +265,7 @@ const addOption = (val: string) => {
 };
 
 const pollTemplate = (opt: string, i: number): string => {
-	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;"</li>`;
+	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;">${opt}</li>`;
 };
 
 

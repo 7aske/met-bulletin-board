@@ -5,14 +5,14 @@ export class Vote implements VoteType {
 	private _choice: string;
 	private _dateVoted: Date;
 	private _id: string;
-	private _voteIndex: number;
-	private _studentIndex: string;
+	private _choiceIndex: number;
+	private _studentId: string;
 
 	constructor(choice: string, studentIndex: string, voteIndex: number) {
 		this._id = shortid.generate();
 		this._choice = choice;
-		this._voteIndex = voteIndex;
-		this._studentIndex = studentIndex;
+		this._choiceIndex = voteIndex;
+		this._studentId = studentIndex;
 		this._dateVoted = new Date();
 	}
 
@@ -40,29 +40,29 @@ export class Vote implements VoteType {
 		this._id = value;
 	}
 
-	get voteIndex(): number {
-		return this._voteIndex;
+	get choiceIndex(): number {
+		return this._choiceIndex;
 	}
 
-	set voteIndex(value: number) {
-		this._voteIndex = value;
+	set choiceIndex(value: number) {
+		this._choiceIndex = value;
 	}
 
-	get studentIndex(): string {
-		return this._studentIndex;
+	get studentId(): string {
+		return this._studentId;
 	}
 
-	set studentIndex(value: string) {
-		this._studentIndex = value;
+	set studentId(value: string) {
+		this._studentId = value;
 	}
 
 	json(): VoteType {
 		return {
-			studentIndex: this._studentIndex,
+			studentId: this._studentId,
 			choice: this._choice,
 			dateVoted: this._dateVoted,
 			id: this._id,
-			voteIndex: this._voteIndex
+			choiceIndex: this._choiceIndex
 		};
 	}
 }

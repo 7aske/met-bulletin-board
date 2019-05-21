@@ -15,7 +15,7 @@ vote.post("/:pollId", async (req, res) => {
 	const pollId = req.params["choiceId"];
 	const choice = req.body["choice"];
 	const choiceId = req.body["choiceId"];
-	const studentIndex = req.body["studentIndex"];
+	const studentIndex = req.body["studentId"];
 	const db = await initDatabase();
 	const newVote = new Vote(choice, studentIndex, choiceId);
 	await addVote(db, pollId, newVote);

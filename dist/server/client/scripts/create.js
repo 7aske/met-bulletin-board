@@ -219,7 +219,7 @@ const addOption = (val) => {
     }
 };
 const pollTemplate = (opt, i) => {
-    return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;"</li>`;
+    return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;">${opt}</li>`;
 };
 const optionTemplate = (opt, len) => {
     return `<div class="row" id="opt-${len - 1}">
