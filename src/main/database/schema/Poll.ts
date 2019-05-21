@@ -1,14 +1,16 @@
-import { PollType } from "../../../@types/Poll";
+import { Choices, PollType } from "../../../@types/Poll";
 import shortid = require("shortid");
 import { Vote } from "./Vote";
 
-export class Poll implements PollType{
-	private _choices: string[];
+
+export class Poll implements PollType {
+	private _choices: Choices;
 	private _dateCreated: Date;
 	private _dateDue: Date;
 	private _id: string;
 	private _votes: Vote[];
-	constructor(choices: string[], dateDue: Date) {
+
+	constructor(choices: Choices, dateDue: Date) {
 		this._id = shortid.generate();
 		this._choices = choices;
 		this._dateCreated = new Date();
@@ -16,11 +18,11 @@ export class Poll implements PollType{
 		this._votes = [];
 	}
 
-	get choices(): string[] {
+	get choices(): Choices {
 		return this._choices;
 	}
 
-	set choices(value: string[]) {
+	set choices(value: Choices) {
 		this._choices = value;
 	}
 
@@ -56,9 +58,10 @@ export class Poll implements PollType{
 		this._votes = value;
 	}
 
-	set addVote(vote: Vote){
+	set addVote(vote: Vote) {
 		this._votes.push(vote);
 	}
+
 	json(): PollType {
 		return {
 			dateCreated: this._dateCreated,
@@ -66,6 +69,6 @@ export class Poll implements PollType{
 			dateDue: this._dateDue,
 			id: this._id,
 			votes: this._votes,
-		}
+		};
 	}
 }

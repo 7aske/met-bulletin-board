@@ -10,15 +10,15 @@ vote.get("/", (req, res) => {
 	res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({status: "UNAUTHORIZED"}));
 });
 
-vote.post("/:id", async (req, res) => {
+vote.post("/:pollId", async (req, res) => {
 	console.log(req.body);
-	const id = req.params["id"];
-	const choice = req.body["vote"];
-	const voteIndex = req.body["id"];
-	const studentIndex = req.body["index"];
+	const pollId = req.params["choiceId"];
+	const choice = req.body["choice"];
+	const choiceId = req.body["choiceId"];
+	const studentIndex = req.body["studentIndex"];
 	const db = await initDatabase();
-	const newVote = new Vote(choice, studentIndex, voteIndex);
-	await addVote(db, id, newVote);
+	const newVote = new Vote(choice, studentIndex, choiceId);
+	await addVote(db, pollId, newVote);
 	res.status(STATUS.HTTP_STATUS_OK).send(JSON.stringify({status: "OK"}));
 });
 

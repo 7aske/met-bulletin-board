@@ -1,3 +1,98 @@
+export type DataStoreTypes = boolean | number | string | string[] | null ;
+export type DataStoreKeys = "isPopUp" | "currentTemplate" | "pollOptions";
+
+export interface DataStore {
+	readonly state: State;
+	readonly _state: _State;
+
+	setState(state: DataStoreKeys, value: DataStoreTypes): DataStoreTypes;
+
+	getState(state: DataStoreKeys): DataStoreTypes;
+
+	registerState(state: DataStoreKeys, value: DataStoreTypes): void;
+
+	subscribe(state: DataStoreKeys, actions: Function[]): void;
+
+	getStateObject?(): _State;
+}
+
+export interface _State {
+	[key: string]: _StateProp;
+}
+
+export interface State {
+	[key: string]: DataStoreTypes;
+}
+
+export interface _StateProp {
+	value: DataStoreTypes;
+	actions: Function[];
+}
+
+export class Store implements DataStore {
+	public readonly _state: _State = {};
+	public readonly state: State = {};
+
+	constructor(initialState: State) {
+		Object.keys(initialState).forEach(key => {
+			this._state[key] = {value: initialState[key], actions: []};
+		});
+		this.state = initialState;
+	}
+
+	public setState(name: DataStoreKeys, state: DataStoreTypes): DataStoreTypes {
+		if (Object.keys(this._state).indexOf(name) == -1) {
+			throw new Error("State must be registered first");
+		} else {
+			this.set(name, state);
+			if (this._state[name].actions) {
+				this._state[name].actions.forEach(action => {
+					action();
+				});
+			}
+		}
+		return this.state[name];
+	}
+
+	public registerState(name: DataStoreKeys, initialState: DataStoreTypes) {
+		if (Object.keys(this.state).indexOf(name) != -1) {
+			throw new Error("State already exists");
+		} else {
+			this.set(name, initialState);
+		}
+	}
+
+	public getState(name: DataStoreKeys): any {
+		if (Object.keys(this.state).indexOf(name) == -1) {
+			throw new Error("State is not registered - '" + name + "'");
+		} else {
+			return this.state[name];
+		}
+	}
+
+	public subscribe(name: DataStoreKeys, actions: Function[]) {
+		if (Object.keys(this._state).indexOf(name) == -1) {
+			throw new Error("State is not registered");
+		} else {
+			this._state[name].actions = actions;
+		}
+	}
+
+	public getStateObject() {
+		return this._state;
+	}
+
+	private set(name: DataStoreKeys, state: DataStoreTypes) {
+		if (Object.keys(this.state).indexOf(name) == -1) {
+			this.state[name] = state;
+			this._state[name] = {value: state, actions: []};
+		} else {
+			this._state[name].value = state;
+			this.state[name] = state;
+		}
+	}
+}
+
 const navbarTemplateControls = document.querySelector("#navbar-template-controls") as HTMLDivElement;
 const templateControlsToggler = document.querySelector("#navbar-toggler") as HTMLButtonElement;
 
@@ -5,6 +100,10 @@ const templateContainer = document.querySelector("#template-container") as HTMLD
 
 const templateType = document.querySelector("#template-type") as HTMLSelectElement;
 const templateBgInp = document.querySelector("#template-background") as HTMLInputElement;
+const templateBgBtnClear = document.querySelector("#template-background-clear") as HTMLButtonElement;
+
+const templateTextColorContent = document.querySelector("#template-color-content") as HTMLInputElement;
+const templateTextColorBackdrop = document.querySelector("#template-color-backdrop") as HTMLInputElement;
 
 const templatePollControlCont = document.querySelector("#template-poll-controls") as HTMLDivElement;
 
@@ -26,11 +125,46 @@ const textJumbotronContent = document.querySelector(".jumbotron p") as HTMLParag
 
 const submitBtn = document.querySelector("#submit-btn") as HTMLButtonElement;
 
-const state: any = {
+const initialState: State = {
 	pollOptions: [],
 	currentTemplate: "blank",
 };
 
+const store = new Store(initialState);
+
+const renderPollTemplates = () => {
+	if (store.getState("currentTemplate") == "poll") {
+		pollAnchor.innerHTML = "";
+		(store.getState("pollOptions") as string[]).forEach((p, i) => {
+			pollAnchor.innerHTML += pollTemplate(p, i + 1);
+		});
+	}
+};
+
+const renderOptionTemplates = () => {
+	if (store.getState("currentTemplate") == "poll") {
+		templatePollOptionCont.innerHTML = "";
+		console.log(store.state);
+		(store.getState("pollOptions") as string[]).forEach((p, i) => {
+			templatePollOptionCont.innerHTML += optionTemplate(p, i + 1);
+		});
+	}
+};
+
+const updateControls = () => {
+	if (store.getState("currentTemplate") === "poll") {
+		templatePollControlCont.classList.remove("d-none");
+	} else {
+		templatePollControlCont.classList.add("d-none");
+		pollAnchor.innerHTML = "";
+		templatePollOptionCont.innerHTML = "";
+	}
+	if (!templateTextControlCheck.checked) {
+		templateTextControlCheck.click();
+	}
+};
+store.subscribe("currentTemplate", [updateControls, renderPollTemplates, renderOptionTemplates]);
+store.subscribe("pollOptions", [renderOptionTemplates, renderPollTemplates]);
 templateContainer.addEventListener("click", () => {
 	const ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
 	if (ariaExpanded.value != "false") {
@@ -48,6 +182,10 @@ templateControlsToggler.addEventListener("click", () => {
 		navbarTemplateControls.classList.remove("show");
 		ariaExpanded.value = "false";
 	}
+});
+
+templateBgBtnClear.addEventListener("click", () => {
+	(templateContainer.firstElementChild as HTMLDivElement).style.backgroundImage = "";
 });
 
 templateBgInp.addEventListener("change", () => {
@@ -92,92 +230,62 @@ templateTextHeadInp.addEventListener("keyup", () => {
 
 templateType.addEventListener("change", () => {
 	const val = templateType.value;
-	switch (val) {
-		case "poll":
-			templatePollControlCont.classList.remove("d-none");
-			state.currentTemplate = "poll";
-			if (!templateTextControlCheck.checked) {
-				templateTextControlCheck.click();
-			}
-			renderOptionTemplates();
-			renderPollTemplates();
-			break;
-		case "blank":
-			templatePollControlCont.classList.add("d-none");
-			state.currentTemplate = "blank";
-			if (templateTextControlCheck.checked) {
-				templateTextControlCheck.click();
-			}
-			clearPoll();
-			break;
-		case "upload":
-			templatePollControlCont.classList.add("d-none");
-			state.currentTemplate = "upload";
-			clearPoll();
-			break;
-		default:
-			templatePollControlCont.classList.add("d-none");
-			state.currentTemplate = "blank";
-			clearPoll();
-	}
-	console.log(templateType.value);
-
+	store.setState("currentTemplate", val);
 });
+
+// templateTextColorContent.addEventListener("change", ()=>{
+// 	console.log(templateTextColorContent.value);
+// });
+//
+// templateTextColorBackdrop.addEventListener("change", ()=>{
+// 	console.log(templateTextColorBackdrop.value);
+// });
+
+templatePollOptionInp.addEventListener("keydown", ev => {
+	if (ev.key.toUpperCase() == "ENTER") {
+		ev.preventDefault();
+		const val = templatePollOptionInp.value.trim();
+		addOption(val);
+	}
+});
+
 btnAddOption.addEventListener("click", () => {
 	const val = templatePollOptionInp.value.trim();
-	if (val != "") {
-		state.pollOptions.push(val);
-		renderOptionTemplates();
-		renderPollTemplates();
-		templatePollOptionInp.value = "";
-	}
+	addOption(val);
 });
 
+const addOption = (val: string) => {
+	if (val != "") {
+		const options: string[] = store.getState("pollOptions");
+		options.push(val);
+		store.setState("pollOptions", options);
+		templatePollOptionInp.value = "";
+	}
+};
+
 const pollTemplate = (opt: string, i: number): string => {
-	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;" onclick="vote(event, '${opt}', ${i})">${opt}</li>`;
+	return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;"</li>`;
 };
 
-
-const renderPollTemplates = () =>{
-	if (state.currentTemplate == "poll") {
-		pollAnchor.innerHTML = "";
-		(state.pollOptions as string[]).forEach((p, i) => {
-			pollAnchor.innerHTML += pollTemplate(p, i + 1);
-		});
-	}
-};
-
-const renderOptionTemplates = () => {
-	if (state.currentTemplate == "poll") {
-		templatePollOptionCont.innerHTML = "";
-		(state.pollOptions as string[]).forEach((p, i) => {
-			templatePollOptionCont.innerHTML += optionTemplate(p, i + 1);
-		});
-	}
-};
 
 const optionTemplate = (opt: string, len: number): string => {
 	return `<div class="row" id="opt-${len - 1}">
 			<div class="col-10"><b>${len}. ${opt}</b></div>
 			<div class="col-2"><button type="button" onclick="(function (opt) {
-			    state.pollOptions = state.pollOptions.filter(o => {
+			    store.setState('pollOptions', store.getState('pollOptions').filter(o => {
 			    	return o !== opt;
-			    });
-			    renderOptionTemplates();
-			    renderPollTemplates();
+			    });)
 			})('${opt}')" class="btn text-light font-weight-bold" style="margin-top: -6px">&times;</button></div>
 			</div>`;
 };
 
-const clearPoll = () => {
-	if (state.currentTemplate != "poll") {
-		pollAnchor.innerHTML = "";
-		templatePollOptionCont.innerHTML = "";
-	}
-};
+
 submitBtn.addEventListener("click", async () => {
 	const content = templateContainer.innerHTML.replace(/[\t]/g, "");
-	const choices = state.pollOptions;
+	const choices: any = {};
+	(store.getState("pollOptions") as string[]).forEach((o, i) => {
+		choices[i] = o;
+	});
 	const url = window.location.origin + "/create";
 	const response = await fetch(url, {
 		body: JSON.stringify({content, choices}),
@@ -186,4 +294,5 @@ submitBtn.addEventListener("click", async () => {
 	});
 	const json = await response.json();
 	console.log(json);
+	alert(json);
 });

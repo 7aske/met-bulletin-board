@@ -3,66 +3,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var shortid_1 = __importDefault(require("shortid"));
-var Vote = /** @class */ (function () {
-    function Vote(choice, studentIndex, voteIndex) {
+const shortid_1 = __importDefault(require("shortid"));
+class Vote {
+    constructor(choice, studentIndex, voteIndex) {
         this._id = shortid_1.default.generate();
         this._choice = choice;
         this._voteIndex = voteIndex;
         this._studentIndex = studentIndex;
         this._dateVoted = new Date();
     }
-    Object.defineProperty(Vote.prototype, "choice", {
-        get: function () {
-            return this._choice;
-        },
-        set: function (value) {
-            this._choice = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Vote.prototype, "dateVoted", {
-        get: function () {
-            return this._dateVoted;
-        },
-        set: function (value) {
-            this._dateVoted = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Vote.prototype, "id", {
-        get: function () {
-            return this._id;
-        },
-        set: function (value) {
-            this._id = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Vote.prototype, "voteIndex", {
-        get: function () {
-            return this._voteIndex;
-        },
-        set: function (value) {
-            this._voteIndex = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Vote.prototype, "studentIndex", {
-        get: function () {
-            return this._studentIndex;
-        },
-        set: function (value) {
-            this._studentIndex = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Vote.prototype.json = function () {
+    get choice() {
+        return this._choice;
+    }
+    set choice(value) {
+        this._choice = value;
+    }
+    get dateVoted() {
+        return this._dateVoted;
+    }
+    set dateVoted(value) {
+        this._dateVoted = value;
+    }
+    get id() {
+        return this._id;
+    }
+    set id(value) {
+        this._id = value;
+    }
+    get voteIndex() {
+        return this._voteIndex;
+    }
+    set voteIndex(value) {
+        this._voteIndex = value;
+    }
+    get studentIndex() {
+        return this._studentIndex;
+    }
+    set studentIndex(value) {
+        this._studentIndex = value;
+    }
+    json() {
         return {
             studentIndex: this._studentIndex,
             choice: this._choice,
@@ -70,7 +50,6 @@ var Vote = /** @class */ (function () {
             id: this._id,
             voteIndex: this._voteIndex
         };
-    };
-    return Vote;
-}());
+    }
+}
 exports.Vote = Vote;

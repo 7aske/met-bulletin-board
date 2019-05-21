@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var fs_1 = require("fs");
-var path_1 = require("path");
-var nodemodules = express_1.Router();
-nodemodules.get("/", function (req, res) {
-    var pth = path_1.join(process.cwd(), req.baseUrl);
+const express_1 = require("express");
+const fs_1 = require("fs");
+const path_1 = require("path");
+const nodemodules = express_1.Router();
+nodemodules.get("/", (req, res) => {
+    const pth = path_1.join(process.cwd(), req.baseUrl);
     if (fs_1.existsSync(pth)) {
         res.sendFile(pth);
     }

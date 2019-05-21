@@ -4,7 +4,6 @@ import { ChildProcess, spawn } from "child_process";
 import { basename, extname, resolve } from "path";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { initDatabase } from "./database/initDatabase";
-import { pathToFileURL } from "url";
 
 export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
 export const TEMPLATES_DIR = resolve(process.cwd(), "templates");
@@ -30,19 +29,13 @@ const main = async () => {
 	window = new BrowserWindow({
 		width: 1440,
 		height: 900,
-		darkTheme: true,
 		title: "Metropolitan Bulletin Board",
 	});
-	// window.setMenu(null);
 	window.loadFile(INDEX);
-	// window.loadFile(templates[temp_index]);
 	window.on("ready-to-show", window.show);
 
-	changeSlide();
-	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
 	const updateTempates = setInterval(() => templates = readTemplates(), TEMPLATE_TIMEOUT);
-	// await addVote(db, "e4S1v_j_o", new Vote("choice1", "3365"));
-	// await addPoll(db, new Poll(["choice 1", "choice 2"], new Date()));
+	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
 };
 
 
@@ -119,7 +112,7 @@ ipcMain.on("template-get", (event: any, data: any) => {
 				template: readFileSync(templates[data]),
 				index: data,
 				total: templates.length,
-				id: basename(filename, extname(filename))
+				id: basename(filename, extname(filename)),
 			};
 			temp_index = ++data == templates.length ? 0 : data;
 			event.sender.send("template-set", td);

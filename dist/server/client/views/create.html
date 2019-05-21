@@ -35,18 +35,19 @@
 			</div>
 
 			<!--BG CONTROLS START-->
-			<div class="custom-file mb-2">
-				<input type="file" class="custom-file-input" name="template-background" id="template-background">
-				<label class="custom-file-label" for="template-background">Background image</label>
+			<div class="d-flex justify-content-between">
+				<div class="custom-file mb-2">
+					<input type="file" class="custom-file-input" name="template-background" id="template-background">
+					<label class="custom-file-label" for="template-background">Background image</label>
+				</div>
+				<button id="template-background-clear" class="btn btn-danger h-50">Clear</button>
 			</div>
 			<!--BG CONTROLS END-->
 
 			<!--POLL CONTROLS START-->
 			<div id="template-poll-controls" class="d-none mb-2">
 				<hr>
-				<div id="poll-option-container" class="pb-2">
-
-				</div>
+				<div id="poll-option-container" class="pb-2"></div>
 				<div class="row">
 					<div class="col-12">
 						<div class="input-group input-group mb-3">
@@ -80,6 +81,22 @@
 						<textarea class="form-control" id="template-text-content" rows="3"
 						          placeholder="Text">Enter text</textarea>
 				</div>
+				<!--<div class="d-flex justify-content-around">-->
+				<!--	<div class="input-group input-group mb-3 pr-1">-->
+				<!--		<div class="input-group-prepend">-->
+				<!--			<span class="input-group-text">Backdrop</span>-->
+				<!--		</div>-->
+				<!--		<input type="color" class="form-control" value="Title" placeholder="Enter a title"-->
+				<!--		       id="template-color-backdrop">-->
+				<!--	</div>-->
+				<!--	<div class="input-group input-group mb-3 pl-1">-->
+				<!--		<div class="input-group-prepend">-->
+				<!--			<span class="input-group-text">Text</span>-->
+				<!--		</div>-->
+				<!--		<input type="color" class="form-control" value="Title" placeholder="Enter a title"-->
+				<!--		       id="template-color-content">-->
+				<!--	</div>-->
+				<!--</div>-->
 				<div class="form-group d-flex justify-content-between">
 					<label for="template-text-size">Size:</label>
 					<input max="72" min="8" value="20" step="1" type="range"
@@ -115,6 +132,7 @@
 		</section>
 	</div>
 </main>
+<script>let exports = {};</script>
 <script src="../scripts/create.js"></script>
 </body>
 </html>

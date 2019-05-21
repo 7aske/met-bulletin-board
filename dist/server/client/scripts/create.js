@@ -7,67 +7,138 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+Object.defineProperty(exports, "__esModule", { value: true });
+class Store {
+    constructor(initialState) {
+        this._state = {};
+        this.state = {};
+        Object.keys(initialState).forEach(key => {
+            this._state[key] = { value: initialState[key], actions: [] };
+        });
+        this.state = initialState;
     }
-};
-var _this = this;
-var navbarTemplateControls = document.querySelector("#navbar-template-controls");
-var templateControlsToggler = document.querySelector("#navbar-toggler");
-var templateContainer = document.querySelector("#template-container");
-var templateType = document.querySelector("#template-type");
-var templateBgInp = document.querySelector("#template-background");
-var templatePollControlCont = document.querySelector("#template-poll-controls");
-var btnAddOption = document.querySelector("#btn-add-option");
-var templatePollOptionCont = document.querySelector("#poll-option-container");
-var templatePollOptionInp = document.querySelector("#poll-option-input");
-var pollAnchor = document.querySelector("#poll-anchor");
-var templateTextControlCheck = document.querySelector("#template-text-checkbox");
-var templateTextControlCont = document.querySelector("#template-text-controls");
-var templateTextControlInp = document.querySelector("#template-text-controls textarea");
-var templateTextHeadInp = document.querySelector("#template-head-content");
-var templateTextControlSize = document.querySelector("#template-text-size");
-var templateTextControlPosition = document.querySelector("#template-text-position");
-var textJumbotron = document.querySelector(".jumbotron");
-var textJumbotronHeader = document.querySelector(".jumbotron h3");
-var textJumbotronContent = document.querySelector(".jumbotron p");
-var submitBtn = document.querySelector("#submit-btn");
-var state = {
+    setState(name, state) {
+        if (Object.keys(this._state).indexOf(name) == -1) {
+            throw new Error("State must be registered first");
+        }
+        else {
+            this.set(name, state);
+            if (this._state[name].actions) {
+                this._state[name].actions.forEach(action => {
+                    action();
+                });
+            }
+        }
+        return this.state[name];
+    }
+    registerState(name, initialState) {
+        if (Object.keys(this.state).indexOf(name) != -1) {
+            throw new Error("State already exists");
+        }
+        else {
+            this.set(name, initialState);
+        }
+    }
+    getState(name) {
+        if (Object.keys(this.state).indexOf(name) == -1) {
+            throw new Error("State is not registered - '" + name + "'");
+        }
+        else {
+            return this.state[name];
+        }
+    }
+    subscribe(name, actions) {
+        if (Object.keys(this._state).indexOf(name) == -1) {
+            throw new Error("State is not registered");
+        }
+        else {
+            this._state[name].actions = actions;
+        }
+    }
+    getStateObject() {
+        return this._state;
+    }
+    set(name, state) {
+        if (Object.keys(this.state).indexOf(name) == -1) {
+            this.state[name] = state;
+            this._state[name] = { value: state, actions: [] };
+        }
+        else {
+            this._state[name].value = state;
+            this.state[name] = state;
+        }
+    }
+}
+exports.Store = Store;
+const navbarTemplateControls = document.querySelector("#navbar-template-controls");
+const templateControlsToggler = document.querySelector("#navbar-toggler");
+const templateContainer = document.querySelector("#template-container");
+const templateType = document.querySelector("#template-type");
+const templateBgInp = document.querySelector("#template-background");
+const templateBgBtnClear = document.querySelector("#template-background-clear");
+const templateTextColorContent = document.querySelector("#template-color-content");
+const templateTextColorBackdrop = document.querySelector("#template-color-backdrop");
+const templatePollControlCont = document.querySelector("#template-poll-controls");
+const btnAddOption = document.querySelector("#btn-add-option");
+const templatePollOptionCont = document.querySelector("#poll-option-container");
+const templatePollOptionInp = document.querySelector("#poll-option-input");
+const pollAnchor = document.querySelector("#poll-anchor");
+const templateTextControlCheck = document.querySelector("#template-text-checkbox");
+const templateTextControlCont = document.querySelector("#template-text-controls");
+const templateTextControlInp = document.querySelector("#template-text-controls textarea");
+const templateTextHeadInp = document.querySelector("#template-head-content");
+const templateTextControlSize = document.querySelector("#template-text-size");
+const templateTextControlPosition = document.querySelector("#template-text-position");
+const textJumbotron = document.querySelector(".jumbotron");
+const textJumbotronHeader = document.querySelector(".jumbotron h3");
+const textJumbotronContent = document.querySelector(".jumbotron p");
+const submitBtn = document.querySelector("#submit-btn");
+const initialState = {
     pollOptions: [],
     currentTemplate: "blank",
 };
-templateContainer.addEventListener("click", function () {
-    var ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
+const store = new Store(initialState);
+const renderPollTemplates = () => {
+    if (store.getState("currentTemplate") == "poll") {
+        pollAnchor.innerHTML = "";
+        store.getState("pollOptions").forEach((p, i) => {
+            pollAnchor.innerHTML += pollTemplate(p, i + 1);
+        });
+    }
+};
+const renderOptionTemplates = () => {
+    if (store.getState("currentTemplate") == "poll") {
+        templatePollOptionCont.innerHTML = "";
+        console.log(store.state);
+        store.getState("pollOptions").forEach((p, i) => {
+            templatePollOptionCont.innerHTML += optionTemplate(p, i + 1);
+        });
+    }
+};
+const updateControls = () => {
+    if (store.getState("currentTemplate") === "poll") {
+        templatePollControlCont.classList.remove("d-none");
+    }
+    else {
+        templatePollControlCont.classList.add("d-none");
+        pollAnchor.innerHTML = "";
+        templatePollOptionCont.innerHTML = "";
+    }
+    if (!templateTextControlCheck.checked) {
+        templateTextControlCheck.click();
+    }
+};
+store.subscribe("currentTemplate", [updateControls, renderPollTemplates, renderOptionTemplates]);
+store.subscribe("pollOptions", [renderOptionTemplates, renderPollTemplates]);
+templateContainer.addEventListener("click", () => {
+    const ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
     if (ariaExpanded.value != "false") {
         navbarTemplateControls.classList.remove("show");
         ariaExpanded.value = "false";
     }
 });
-templateControlsToggler.addEventListener("click", function () {
-    var ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
+templateControlsToggler.addEventListener("click", () => {
+    const ariaExpanded = templateControlsToggler.attributes.getNamedItem("aria-expanded");
     if (ariaExpanded.value == "false") {
         navbarTemplateControls.classList.add("show");
         ariaExpanded.value = "true";
@@ -77,11 +148,14 @@ templateControlsToggler.addEventListener("click", function () {
         ariaExpanded.value = "false";
     }
 });
-templateBgInp.addEventListener("change", function () {
-    var image = templateBgInp.files[0];
-    var reader = new FileReader();
-    reader.onload = function () {
-        templateContainer.firstElementChild.style.backgroundImage = "url(\"" + reader.result + "\")";
+templateBgBtnClear.addEventListener("click", () => {
+    templateContainer.firstElementChild.style.backgroundImage = "";
+});
+templateBgInp.addEventListener("change", () => {
+    const image = templateBgInp.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+        templateContainer.firstElementChild.style.backgroundImage = `url("${reader.result}")`;
     };
     if (image) {
         reader.readAsDataURL(image);
@@ -90,7 +164,7 @@ templateBgInp.addEventListener("change", function () {
         templateContainer.firstElementChild.style.backgroundImage = "";
     }
 });
-templateTextControlCheck.addEventListener("change", function () {
+templateTextControlCheck.addEventListener("change", () => {
     if (templateTextControlCheck.checked) {
         templateTextControlCont.classList.remove("d-none");
         textJumbotron.classList.remove("d-none");
@@ -100,109 +174,76 @@ templateTextControlCheck.addEventListener("change", function () {
         textJumbotron.classList.add("d-none");
     }
 });
-templateTextControlSize.addEventListener("mousemove", function () {
+templateTextControlSize.addEventListener("mousemove", () => {
     textJumbotronContent.style.fontSize = templateTextControlSize.value + "px";
     pollAnchor.style.fontSize = templateTextControlSize.value + "px";
     textJumbotronHeader.style.fontSize = (parseInt(templateTextControlSize.value) + 24) + "px";
 });
-templateTextControlPosition.addEventListener("mousemove", function () {
+templateTextControlPosition.addEventListener("mousemove", () => {
     textJumbotron.style.top = templateTextControlPosition.value + "%";
 });
-templateTextControlInp.addEventListener("keyup", function () {
+templateTextControlInp.addEventListener("keyup", () => {
     textJumbotronContent.innerText = templateTextControlInp.value;
 });
-templateTextHeadInp.addEventListener("keyup", function () {
+templateTextHeadInp.addEventListener("keyup", () => {
     textJumbotronHeader.innerText = templateTextHeadInp.value;
 });
-templateType.addEventListener("change", function () {
-    var val = templateType.value;
-    switch (val) {
-        case "poll":
-            templatePollControlCont.classList.remove("d-none");
-            state.currentTemplate = "poll";
-            if (!templateTextControlCheck.checked) {
-                templateTextControlCheck.click();
-            }
-            renderOptionTemplates();
-            renderPollTemplates();
-            break;
-        case "blank":
-            templatePollControlCont.classList.add("d-none");
-            state.currentTemplate = "blank";
-            if (templateTextControlCheck.checked) {
-                templateTextControlCheck.click();
-            }
-            clearPoll();
-            break;
-        case "upload":
-            templatePollControlCont.classList.add("d-none");
-            state.currentTemplate = "upload";
-            clearPoll();
-            break;
-        default:
-            templatePollControlCont.classList.add("d-none");
-            state.currentTemplate = "blank";
-            clearPoll();
-    }
-    console.log(templateType.value);
+templateType.addEventListener("change", () => {
+    const val = templateType.value;
+    store.setState("currentTemplate", val);
 });
-btnAddOption.addEventListener("click", function () {
-    var val = templatePollOptionInp.value.trim();
+// templateTextColorContent.addEventListener("change", ()=>{
+// 	console.log(templateTextColorContent.value);
+// });
+//
+// templateTextColorBackdrop.addEventListener("change", ()=>{
+// 	console.log(templateTextColorBackdrop.value);
+// });
+templatePollOptionInp.addEventListener("keydown", ev => {
+    if (ev.key.toUpperCase() == "ENTER") {
+        ev.preventDefault();
+        const val = templatePollOptionInp.value.trim();
+        addOption(val);
+    }
+});
+btnAddOption.addEventListener("click", () => {
+    const val = templatePollOptionInp.value.trim();
+    addOption(val);
+});
+const addOption = (val) => {
     if (val != "") {
-        state.pollOptions.push(val);
-        renderOptionTemplates();
-        renderPollTemplates();
+        const options = store.getState("pollOptions");
+        options.push(val);
+        store.setState("pollOptions", options);
         templatePollOptionInp.value = "";
     }
-});
-var pollTemplate = function (opt, i) {
-    return "<li class=\"list-group-item bg-transparent text-dark\" style=\"cursor: pointer;\" onclick=\"vote(event, '" + opt + "', " + i + ")\">" + opt + "</li>";
 };
-var renderPollTemplates = function () {
-    if (state.currentTemplate == "poll") {
-        pollAnchor.innerHTML = "";
-        state.pollOptions.forEach(function (p, i) {
-            pollAnchor.innerHTML += pollTemplate(p, i + 1);
-        });
-    }
+const pollTemplate = (opt, i) => {
+    return `<li class="list-group-item bg-transparent text-dark" style="cursor: pointer;"</li>`;
 };
-var renderOptionTemplates = function () {
-    if (state.currentTemplate == "poll") {
-        templatePollOptionCont.innerHTML = "";
-        state.pollOptions.forEach(function (p, i) {
-            templatePollOptionCont.innerHTML += optionTemplate(p, i + 1);
-        });
-    }
+const optionTemplate = (opt, len) => {
+    return `<div class="row" id="opt-${len - 1}">
+			<div class="col-10"><b>${len}. ${opt}</b></div>
+			<div class="col-2"><button type="button" onclick="(function (opt) {
+			    store.setState('pollOptions', store.getState('pollOptions').filter(o => {
+			    	return o !== opt;
+			    });)
+			})('${opt}')" class="btn text-light font-weight-bold" style="margin-top: -6px">&times;</button></div>
+			</div>`;
 };
-var optionTemplate = function (opt, len) {
-    return "<div class=\"row\" id=\"opt-" + (len - 1) + "\">\n\t\t\t<div class=\"col-10\"><b>" + len + ". " + opt + "</b></div>\n\t\t\t<div class=\"col-2\"><button type=\"button\" onclick=\"(function (opt) {\n\t\t\t    state.pollOptions = state.pollOptions.filter(o => {\n\t\t\t    \treturn o !== opt;\n\t\t\t    });\n\t\t\t    renderOptionTemplates();\n\t\t\t    renderPollTemplates();\n\t\t\t})('" + opt + "')\" class=\"btn text-light font-weight-bold\" style=\"margin-top: -6px\">&times;</button></div>\n\t\t\t</div>";
-};
-var clearPoll = function () {
-    if (state.currentTemplate != "poll") {
-        pollAnchor.innerHTML = "";
-        templatePollOptionCont.innerHTML = "";
-    }
-};
-submitBtn.addEventListener("click", function () { return __awaiter(_this, void 0, void 0, function () {
-    var content, choices, url, response, json;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                content = templateContainer.innerHTML.replace(/[\t]/g, "");
-                choices = state.pollOptions;
-                url = window.location.origin + "/create";
-                return [4 /*yield*/, fetch(url, {
-                        body: JSON.stringify({ content: content, choices: choices }),
-                        method: "post",
-                        headers: new Headers({ "Content-Type": "application/json" }),
-                    })];
-            case 1:
-                response = _a.sent();
-                return [4 /*yield*/, response.json()];
-            case 2:
-                json = _a.sent();
-                console.log(json);
-                return [2 /*return*/];
-        }
+submitBtn.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+    const content = templateContainer.innerHTML.replace(/[\t]/g, "");
+    const choices = {};
+    store.getState("pollOptions").forEach((o, i) => {
+        choices[i] = o;
     });
-}); });
+    const url = window.location.origin + "/create";
+    const response = yield fetch(url, {
+        body: JSON.stringify({ content, choices }),
+        method: "post",
+        headers: new Headers({ "Content-Type": "application/json" }),
+    });
+    const json = yield response.json();
+    console.log(json);
+    alert(json);
+}));

@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { join, resolve } from "path";
 import { constants as STATUS } from "http2";
-import shortid = require("shortid");
 import { writeFile } from "fs";
 import { initDatabase } from "../../main/database/initDatabase";
 import { addPoll } from "../../main/database/actions/pollActions";
