@@ -10,11 +10,14 @@ export class Poll implements PollType {
 	private _id: string;
 	private _votes: Vote[];
 
-	constructor(choices: Choices, dateDue: Date) {
+	constructor(choices: Choices, dateDue?: Date) {
 		this._id = shortid.generate();
 		this._choices = choices;
 		this._dateCreated = new Date();
-		this._dateDue = dateDue;
+		if (dateDue)
+			this._dateDue = dateDue;
+		else
+			this._dateDue = null;
 		this._votes = [];
 	}
 

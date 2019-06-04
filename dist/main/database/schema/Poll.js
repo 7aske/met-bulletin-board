@@ -6,7 +6,10 @@ class Poll {
         this._id = shortid.generate();
         this._choices = choices;
         this._dateCreated = new Date();
-        this._dateDue = dateDue;
+        if (dateDue)
+            this._dateDue = dateDue;
+        else
+            this._dateDue = null;
         this._votes = [];
     }
     get choices() {

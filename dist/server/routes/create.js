@@ -19,20 +19,23 @@ const TEMPLATES_DIR = path_1.resolve(process.cwd(), "templates");
 const CLIENT_ROOT = path_1.resolve(process.cwd(), "dist/server/client");
 const create = express_1.Router();
 create.get("/", (req, res, next) => {
-    if (req.path == "/")
+    if (req.path == "/") {
         res.sendFile(path_1.resolve(CLIENT_ROOT, "views/create.html"));
-    else
+    }
+    else {
         next();
+    }
 });
 create.post("/", (req, res) => __awaiter(this, void 0, void 0, function* () {
     const { content, choices } = req.body;
+    const newPoll = new Poll_1.Poll(choices);
     const db = yield initDatabase_1.initDatabase();
-    const newPoll = new Poll_1.Poll(choices, new Date());
     yield pollActions_1.addPoll(db, newPoll);
     const pth = path_1.join(TEMPLATES_DIR, newPoll.id + ".html");
     fs_1.writeFile(pth, content, err => {
-        if (err)
+        if (err) {
             console.log(err);
+        }
     });
     res.status(http2_1.constants.HTTP_STATUS_CREATED).send(JSON.stringify({ poll: newPoll.json() }));
 }));

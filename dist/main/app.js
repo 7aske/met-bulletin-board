@@ -33,7 +33,6 @@ let window = null;
 exports.templates = [];
 const main = () => __awaiter(this, void 0, void 0, function* () {
     const key = generateKey();
-    let cookie = { url: "http://127.0.0.1/", path: "/vote", value: "Auth: " + key };
     initDirs();
     db = yield initDatabase_1.initDatabase();
     exports.templates = readTemplates();

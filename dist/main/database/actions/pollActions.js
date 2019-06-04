@@ -11,3 +11,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addPoll = (db, poll) => __awaiter(this, void 0, void 0, function* () {
     yield db.get("polls").push(poll.json()).write();
 });
+exports.getPolls = (db) => __awaiter(this, void 0, void 0, function* () {
+    return yield db.get("polls").find().value();
+});
+exports.getPoll = (db, id) => __awaiter(this, void 0, void 0, function* () {
+    return yield db.get("polls").find({ id: id }).value();
+});
+exports.removePoll = (db, id) => __awaiter(this, void 0, void 0, function* () {
+    return yield db.get("polls").remove({ id: id }).write();
+});

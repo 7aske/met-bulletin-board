@@ -4,12 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const auth_1 = __importDefault(require("./middleware/auth"));
 const manage_1 = __importDefault(require("./routes/manage"));
 const create_1 = __importDefault(require("./routes/create"));
 const vote_1 = __importDefault(require("./routes/vote"));
 const nodemodules_1 = __importDefault(require("./routes/nodemodules"));
 const path_1 = require("path");
 const router = express_1.Router();
+router.use("/", auth_1.default);
 router.use(express_1.static(path_1.join(process.cwd(), "dist/server/client")));
 router.use("/manage", manage_1.default);
 router.use("/vote", vote_1.default);

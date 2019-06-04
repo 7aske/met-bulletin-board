@@ -13,20 +13,22 @@ const CLIENT_ROOT: string = resolve(process.cwd(), "dist/server/client");
 const create = Router();
 
 create.get("/", (req, res, next) => {
-	if (req.path == "/")
+	if (req.path == "/") {
 		res.sendFile(resolve(CLIENT_ROOT, "views/create.html"));
-	else
+	} else {
 		next();
+	}
 });
 create.post("/", async (req, res) => {
 	const {content, choices} = req.body;
+	const newPoll = new Poll(choices);
 	const db = await initDatabase();
-	const newPoll = new Poll(choices, new Date());
 	await addPoll(db, newPoll);
 	const pth = join(TEMPLATES_DIR, newPoll.id + ".html");
 	writeFile(pth, content, err => {
-		if (err)
+		if (err) {
 			console.log(err);
+		}
 	});
 	res.status(STATUS.HTTP_STATUS_CREATED).send(JSON.stringify({poll: newPoll.json()}));
 });

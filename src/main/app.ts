@@ -25,7 +25,6 @@ export let templates: string[] = [];
 
 const main = async () => {
 	const key = generateKey();
-	let cookie = {url: "http://127.0.0.1/", path: "/vote", value: "Auth: " + key};
 	initDirs();
 	db = await initDatabase();
 	templates = readTemplates();

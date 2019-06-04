@@ -13,3 +13,13 @@ exports.addVote = (db, id, vote) => __awaiter(this, void 0, void 0, function* ()
     const poll = yield polls.find({ id: id });
     yield poll.get("votes").push(vote.json()).write();
 });
+exports.getVotes = (db, id) => __awaiter(this, void 0, void 0, function* () {
+    const polls = yield db.get("polls");
+    const poll = yield polls.find({ id: id });
+    return yield poll.get("votes").value();
+});
+exports.resetVotes = (db, id) => __awaiter(this, void 0, void 0, function* () {
+    const polls = yield db.get("polls");
+    const poll = yield polls.find({ id: id });
+    return yield poll.assign({ votes: [] }).write();
+});
