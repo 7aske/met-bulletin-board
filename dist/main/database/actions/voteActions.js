@@ -18,6 +18,17 @@ exports.getVotes = (db, id) => __awaiter(this, void 0, void 0, function* () {
     const poll = yield polls.find({ id: id });
     return yield poll.get("votes").value();
 });
+exports.getVoteCount = (db, id, choice) => __awaiter(this, void 0, void 0, function* () {
+    const polls = yield db.get("polls");
+    const poll = yield polls.find({ id: id });
+    return yield poll.get("votes").filter(v => v.choiceIndex.toString(10) == choice).value();
+});
+exports.hasVoted = (db, id, studentId) => __awaiter(this, void 0, void 0, function* () {
+    const polls = yield db.get("polls");
+    const poll = yield polls.find({ id: id });
+    console.log(poll.get("votes").filter(v => v.studentId == studentId).value());
+    return (yield poll.get("votes").filter(v => v.studentId == studentId).value().length) > 0;
+});
 exports.resetVotes = (db, id) => __awaiter(this, void 0, void 0, function* () {
     const polls = yield db.get("polls");
     const poll = yield polls.find({ id: id });

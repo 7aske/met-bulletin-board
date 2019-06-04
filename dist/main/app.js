@@ -44,7 +44,7 @@ const main = () => __awaiter(this, void 0, void 0, function* () {
     });
     window.loadFile(exports.INDEX);
     window.on("ready-to-show", window.show);
-    setTimeout(() => window.webContents.send("key-set", key), 2000);
+    window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
     const updateTempates = setInterval(() => exports.templates = readTemplates(), exports.TEMPLATE_TIMEOUT);
     const slideshowInterval = setInterval(changeSlide, exports.TEMPLATE_TIMEOUT);
 });

@@ -5,18 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const shortid_1 = __importDefault(require("shortid"));
 class Vote {
-    constructor(choice, studentIndex, voteIndex) {
+    constructor(studentId, choiceIndex) {
         this._id = shortid_1.default.generate();
-        this._choice = choice;
-        this._choiceIndex = voteIndex;
-        this._studentId = studentIndex;
+        this._choiceIndex = choiceIndex;
+        this._studentId = studentId;
         this._dateVoted = new Date();
-    }
-    get choice() {
-        return this._choice;
-    }
-    set choice(value) {
-        this._choice = value;
     }
     get dateVoted() {
         return this._dateVoted;
@@ -45,7 +38,6 @@ class Vote {
     json() {
         return {
             studentId: this._studentId,
-            choice: this._choice,
             dateVoted: this._dateVoted,
             id: this._id,
             choiceIndex: this._choiceIndex

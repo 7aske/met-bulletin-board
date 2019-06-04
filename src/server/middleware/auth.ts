@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, Router } from "express";
 import crypto from "crypto";
-import jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { constants as STATUS } from "http2";
 
 const auth = Router();
@@ -24,10 +24,15 @@ auth.get("/login", (req, res) => {
 		res.send(loginPage);
 		return;
 	}
-	const verified = jwt.verify(token, secret, verifyopts);
-	if (verified) {
-		res.redirect("/manage");
-	} else {
+	try {
+		const verified = jwt.verify(token, secret, verifyopts);
+		if (verified) {
+			res.redirect("/manage");
+		} else {
+			res.clearCookie("Token");
+			res.send(loginPage);
+		}
+	} catch (e) {
 		res.clearCookie("Token");
 		res.send(loginPage);
 	}
@@ -58,6 +63,14 @@ auth.post("/login", (req, res) => {
 
 auth.get("/*", (req: Request, res: Response, next: NextFunction) => {
 	const token = req.cookies["Token"];
+	const auth = req.headers["authorization"];
+	const key = process.env.KEY;
+	if (auth) {
+		if (auth == key) {
+			next();
+			return;
+		}
+	}
 	const secret = process.env.SECRET;
 	const verifyopts: any = {algorithm: "RS512"};
 
@@ -65,10 +78,14 @@ auth.get("/*", (req: Request, res: Response, next: NextFunction) => {
 		res.redirect("/login");
 		return;
 	}
-	const verified = jwt.verify(token, secret, verifyopts);
-	if (verified) {
-		next();
-	} else {
+	try {
+		const verified = jwt.verify(token, secret, verifyopts);
+		if (verified) {
+			next();
+		} else {
+			res.redirect("/login");
+		}
+	} catch (e) {
 		res.redirect("/login");
 	}
 });
@@ -121,4 +138,5 @@ const loginPage = "<!DOCTYPE html>\n" +
 	"                </form>\n" +
 	"        </body>\n" +
 	"</html>";
+
 export default auth;

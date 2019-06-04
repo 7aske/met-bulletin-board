@@ -22,13 +22,17 @@ vote.post("/:pollId", (req, res) => __awaiter(this, void 0, void 0, function* ()
     if (auth == process.env.KEY) {
         console.log(req.body);
         const pollId = req.params["pollId"];
-        const choice = req.body["choice"];
         const choiceId = req.body["choiceId"];
-        const studentIndex = req.body["studentId"];
+        const studentId = req.body["studentId"];
         const db = yield initDatabase_1.initDatabase();
-        const newVote = new Vote_1.Vote(choice, studentIndex, choiceId);
-        yield voteActions_1.addVote(db, pollId, newVote);
-        res.status(http2_1.constants.HTTP_STATUS_OK).send(JSON.stringify({ status: "OK" }));
+        const newVote = new Vote_1.Vote(studentId, choiceId);
+        if (yield voteActions_1.hasVoted(db, pollId, studentId)) {
+            res.status(http2_1.constants.HTTP_STATUS_BAD_REQUEST).send(JSON.stringify({ status: "BAD REQUEST" }));
+        }
+        else {
+            yield voteActions_1.addVote(db, pollId, newVote);
+            res.status(http2_1.constants.HTTP_STATUS_OK).send(JSON.stringify({ status: "OK" }));
+        }
     }
     else {
         res.status(http2_1.constants.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({ status: "UNAUTHORIZED" }));

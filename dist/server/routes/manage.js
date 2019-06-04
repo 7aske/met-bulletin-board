@@ -12,9 +12,16 @@ const express_1 = require("express");
 const initDatabase_1 = require("../../main/database/initDatabase");
 const pollActions_1 = require("../../main/database/actions/pollActions");
 const voteActions_1 = require("../../main/database/actions/voteActions");
+const path_1 = require("path");
+const CLIENT_ROOT = path_1.resolve(process.cwd(), "dist/server/client");
 const manage = express_1.Router();
-manage.get("/", (req, res) => {
-    res.send("MANAGE");
+manage.get("/", (req, res, next) => {
+    if (req.path == "/") {
+        res.sendFile(path_1.resolve(CLIENT_ROOT, "views/manage.html"));
+    }
+    else {
+        next();
+    }
 });
 manage.get("/polls", (req, res) => __awaiter(this, void 0, void 0, function* () {
     const db = yield initDatabase_1.initDatabase();
@@ -43,6 +50,18 @@ manage.get("/polls/:id/votes", (req, res) => __awaiter(this, void 0, void 0, fun
     const r = yield voteActions_1.getVotes(db, id);
     if (r) {
         res.json(r);
+    }
+    else {
+        res.json({});
+    }
+}));
+manage.get("/polls/:id/votes/:voteid", (req, res) => __awaiter(this, void 0, void 0, function* () {
+    const pollid = req.params.id;
+    const voteid = req.params.voteid;
+    const db = yield initDatabase_1.initDatabase();
+    const votes = yield voteActions_1.getVoteCount(db, pollid, voteid);
+    if (votes) {
+        res.json({ pollid, voteid, votes });
     }
     else {
         res.json({});

@@ -37,8 +37,7 @@ const main = async () => {
 
 	window.loadFile(INDEX);
 	window.on("ready-to-show", window.show);
-
-	setTimeout(() => window.webContents.send("key-set", key), 2000);
+	window.webContents.on("dom-ready", ()=>window.webContents.send("key-set", key));
 	const updateTempates = setInterval(() => templates = readTemplates(), TEMPLATE_TIMEOUT);
 	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
 };

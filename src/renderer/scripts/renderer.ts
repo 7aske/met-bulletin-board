@@ -12,7 +12,7 @@ const updatePollId = () => {
 			const choice = e as HTMLLIElement;
 			e.addEventListener("click", ev => {
 				const id = (ev.target as HTMLElement).parentElement.attributes.getNamedItem("data-id").value;
-				vote(id, choice.innerText, i + 1);
+				vote(id, choice.childNodes[0].textContent, i);
 			});
 		});
 	}
@@ -21,6 +21,25 @@ const updatePollId = () => {
 const updateTemplateContainer = () => {
 	const data: TemplateDataType = store.getState("currentTemplate");
 	section.innerHTML = data.template.toString();
+	const pollAnchor = document.querySelector("#poll-anchor") as HTMLElement;
+	if (pollAnchor != undefined) {
+		pollAnchor.setAttribute("data-id", data.id);
+		pollAnchor.childNodes.forEach(async (e, i) => {
+			const choice = e as HTMLLIElement;
+			const id = choice.parentElement.attributes.getNamedItem("data-id").value;
+			const url = "http://127.0.0.1:5000/manage/polls/" + id + "/votes/" + i;
+			const resp = await fetch(url, {
+				headers: new Headers({
+					"Content-Type": "application/x-www-form-urlencoded",
+					"Access-Control-Allow-Origin": "*",
+					"Authorization": store.getState("key"),
+				}),
+			});
+			console.log(resp);
+			const json = await resp.json();
+			choice.innerHTML += "<div style='font-size: " + pollAnchor.style.fontSize + "' class=\"badge badge-info position-relative float-right\">" + json.votes.length + "</div>";
+		});
+	}
 };
 
 const updateIndicator = () => {
@@ -57,7 +76,7 @@ document.addEventListener("keydown", ev => {
 
 const initialState: State = {
 	"currentTemplate": null,
-	"key": ""
+	"key": "",
 };
 
 const store = new Store(initialState);
@@ -129,12 +148,20 @@ const vote = (id: string, choice: string, choiceIndex: number) => {
 					"Authorization": store.getState("key"),
 				}),
 				method: "POST",
-				body: `choice=${choice}&choiceId=${choiceIndex}&studentIndex=${identity}`,
-			});
-			const json = await resp.json();
-			console.log(json);
+				body: `choice=${choice}&choiceId=${choiceIndex}&studentId=${identity}`,
+			});if (resp.status == 400) {
+				popupDialog.close.click();
+				setTimeout(() => {
+					popupDialog.openType("Greska", "Vec ste glasali!", "danger");
+				}, 500);
+			} else {
+				popupDialog.close.click();
+				setTimeout(() => {
+					popupDialog.openType("Obavestenje", "Uspesno ste glasali!", "success");
+				}, 500);
+				updateTemplateContainer();
+			}
 		} else {
-			// TODO: error handlling
 			popupDialog.close.click();
 			setTimeout(() => {
 				popupDialog.openType("Upozorenje", "Uneli ste pogresne podatke!", "danger");

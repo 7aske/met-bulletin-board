@@ -136,7 +136,7 @@ const renderPollTemplates = () => {
 	if (store.getState("currentTemplate") == "poll") {
 		pollAnchor.innerHTML = "";
 		(store.getState("pollOptions") as string[]).forEach((p, i) => {
-			pollAnchor.innerHTML += pollTemplate(p, i + 1);
+			pollAnchor.innerHTML += pollTemplate(p, i);
 		});
 	}
 };

@@ -21,6 +21,11 @@ class PopupDialog {
                 this.destroyPopup();
             });
             this.confirm.style.display = "inline-block";
+            setTimeout(() => this.close.click(), 20000);
+        }
+        else {
+            this.confirm.style.display = "none";
+            setTimeout(() => this.close.click(), 10000);
         }
         setTimeout(() => {
             this.popup.style.transform = "translateY(10vh)";
@@ -40,6 +45,11 @@ class PopupDialog {
                 this.destroyPopup();
             });
             this.confirm.style.display = "inline-block";
+            setTimeout(() => this.close.click(), 20000);
+        }
+        else {
+            this.confirm.style.display = "none";
+            setTimeout(() => this.close.click(), 20000);
         }
         setTimeout(() => {
             this.popup.style.transform = "translateY(10vh)";

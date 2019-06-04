@@ -24,11 +24,17 @@ auth.get("/login", (req, res) => {
         res.send(loginPage);
         return;
     }
-    const verified = jsonwebtoken_1.default.verify(token, secret, verifyopts);
-    if (verified) {
-        res.redirect("/manage");
+    try {
+        const verified = jsonwebtoken_1.default.verify(token, secret, verifyopts);
+        if (verified) {
+            res.redirect("/manage");
+        }
+        else {
+            res.clearCookie("Token");
+            res.send(loginPage);
+        }
     }
-    else {
+    catch (e) {
         res.clearCookie("Token");
         res.send(loginPage);
     }
@@ -56,17 +62,30 @@ auth.post("/login", (req, res) => {
 });
 auth.get("/*", (req, res, next) => {
     const token = req.cookies["Token"];
+    const auth = req.headers["authorization"];
+    const key = process.env.KEY;
+    if (auth) {
+        if (auth == key) {
+            next();
+            return;
+        }
+    }
     const secret = process.env.SECRET;
     const verifyopts = { algorithm: "RS512" };
     if (!token) {
         res.redirect("/login");
         return;
     }
-    const verified = jsonwebtoken_1.default.verify(token, secret, verifyopts);
-    if (verified) {
-        next();
+    try {
+        const verified = jsonwebtoken_1.default.verify(token, secret, verifyopts);
+        if (verified) {
+            next();
+        }
+        else {
+            res.redirect("/login");
+        }
     }
-    else {
+    catch (e) {
         res.redirect("/login");
     }
 });
