@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const dotenv_1 = __importDefault(require("dotenv"));
+const crypto_1 = __importDefault(require("crypto"));
 const child_process_1 = require("child_process");
 const path_1 = require("path");
 const fs_1 = require("fs");
@@ -23,16 +24,20 @@ exports.CONFIG_DIR = path_1.resolve(process.cwd(), "config/config.cfg");
 if (dotenv_1.default.config({ path: exports.CONFIG_DIR }).error)
     throw "Invalid config";
 exports.TEMPLATE_TIMEOUT = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
+exports.KEY_TIMEOUT = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
+const hash = crypto_1.default.createHash("sha256");
 let temp_index = 0;
 let db = null;
 let server = null;
 let window = null;
 exports.templates = [];
 const main = () => __awaiter(this, void 0, void 0, function* () {
+    const key = generateKey();
+    let cookie = { url: "http://127.0.0.1/", path: "/vote", value: "Auth: " + key };
     initDirs();
     db = yield initDatabase_1.initDatabase();
     exports.templates = readTemplates();
-    server = startServer();
+    server = startServer(key);
     window = new electron_1.BrowserWindow({
         width: 1440,
         height: 900,
@@ -40,6 +45,7 @@ const main = () => __awaiter(this, void 0, void 0, function* () {
     });
     window.loadFile(exports.INDEX);
     window.on("ready-to-show", window.show);
+    setTimeout(() => window.webContents.send("key-set", key), 2000);
     const updateTempates = setInterval(() => exports.templates = readTemplates(), exports.TEMPLATE_TIMEOUT);
     const slideshowInterval = setInterval(changeSlide, exports.TEMPLATE_TIMEOUT);
 });
@@ -49,8 +55,13 @@ const close = () => {
     electron_1.app.exit(0);
     process.exit(0);
 };
-const startServer = () => {
-    return child_process_1.spawn("node", ["dist/server/server.js"], { stdio: "inherit" });
+const generateKey = () => {
+    const randnum = Math.random();
+    hash.update(randnum.toString());
+    return hash.digest().toString("hex");
+};
+const startServer = (key) => {
+    return child_process_1.spawn("node", ["dist/server/server.js"], { stdio: "inherit", env: { "KEY": key } });
 };
 const initDirs = () => {
     if (!fs_1.existsSync(exports.TEMPLATES_DIR)) {

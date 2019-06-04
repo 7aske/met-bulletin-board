@@ -1,7 +1,7 @@
 import { Choices } from "./Poll";
 
 export type DataStoreTypes = boolean | number | string | string[] | Choices | TemplateDataType | null ;
-export type DataStoreKeys = "isPopUp" | "currentTemplate";
+export type DataStoreKeys = "isPopUp" | "currentTemplate" | "key";
 
 export interface DataStore {
 	readonly state: State;

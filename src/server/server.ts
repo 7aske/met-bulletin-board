@@ -7,8 +7,7 @@ import { resolve } from "path";
 if (dotenv.config({path: resolve(process.cwd(), "config/config.cfg")}).error)
 	throw "Invalid config file";
 
-const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;
-
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const server: express.Application = express();
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(bodyParser.json({limit:"5mb"}));

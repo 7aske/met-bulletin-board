@@ -11,15 +11,21 @@ vote.get("/", (req, res) => {
 });
 
 vote.post("/:pollId", async (req, res) => {
-	console.log(req.body);
-	const pollId = req.params["choiceId"];
-	const choice = req.body["choice"];
-	const choiceId = req.body["choiceId"];
-	const studentIndex = req.body["studentId"];
-	const db = await initDatabase();
-	const newVote = new Vote(choice, studentIndex, choiceId);
-	await addVote(db, pollId, newVote);
-	res.status(STATUS.HTTP_STATUS_OK).send(JSON.stringify({status: "OK"}));
+	const auth = req.headers["authorization"];
+	if (auth == process.env.KEY){
+		console.log(req.body);
+		const pollId = req.params["pollId"];
+		const choice = req.body["choice"];
+		const choiceId = req.body["choiceId"];
+		const studentIndex = req.body["studentId"];
+		const db = await initDatabase();
+		const newVote = new Vote(choice, studentIndex, choiceId);
+		await addVote(db, pollId, newVote);
+		res.status(STATUS.HTTP_STATUS_OK).send(JSON.stringify({status: "OK"}));
+	} else {
+		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({status: "UNAUTHORIZED"}));
+	}
+
 });
 
 export default vote;

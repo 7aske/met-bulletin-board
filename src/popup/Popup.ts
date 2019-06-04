@@ -10,11 +10,31 @@ export class PopupDialog {
 	constructor(store: Store) {
 		this.store = store;
 		this.initStates();
-		this.initStyleSheet();
+		PopupDialog.initStyleSheet();
 		this.backdrop = PopupDialog.initBackdrop("popup-backdrop");
 		this.popup = null;
 		this.confirm = null;
 		this.close = null;
+	}
+
+	public openType(title: string, body: string, type: string, cb?: Function) {
+		this.createPopup(title, body, type);
+		this.close.addEventListener("click", () => {
+			this.destroyPopup();
+		});
+		if (cb) {
+			this.confirm.addEventListener("click", () => {
+				cb();
+				this.destroyPopup();
+			});
+			this.confirm.style.display = "inline-block";
+		}
+		setTimeout(() => {
+			this.popup.style.transform = "translateY(10vh)";
+		}, 10);
+		this.backdrop.style.visibility = "visible";
+		this.backdrop.style.opacity = "1";
+		this.store.setState("isPopUp", true);
 	}
 
 	public open(title: string, body: string, cb?: Function) {
@@ -53,12 +73,12 @@ export class PopupDialog {
 		}, 100);
 	}
 
-	private createPopup(title: string, body: string) {
-		const html = `<div id="popup" class="card"><div class="card-header"><h5 class="card-title mb-0">${title}</h5>
+	private createPopup(title: string, body: string, type?: string) {
+		const html = `<div id="popup" class="card"><div class="card-header alert-${type ? type : "secondary"}"><h5 class="card-title mb-0">${title}</h5>
 						</div><div class="card-body">${body}</div>
 						<div class="card-footer">
 							<button class="btn btn-secondary" id="popupClose">Zatvori</button>
-							<button class="btn btn-primary" id="popupConfirm">Potvrdi</button>
+							<button class="btn btn-success" id="popupConfirm">Potvrdi</button>
 						</div></div>`;
 		this.backdrop.innerHTML += html;
 		this.popup = document.querySelector("#popup");
@@ -66,7 +86,7 @@ export class PopupDialog {
 		this.close = document.querySelector("#popupClose");
 	}
 
-	private initStyleSheet() {
+	private static initStyleSheet() {
 		const rule0 = `#popup-backdrop {
 				transition: 100ms all;
 				visibility: hidden;
@@ -83,8 +103,9 @@ export class PopupDialog {
 				transition: 200ms -webkit-transform;
 				transition: 200ms transform;
 				transition: 200ms transform, 200ms -webkit-transform;
-				width: 600px;
-				height: 300px;
+				width: 400px;
+				min-height: 100px;
+				max-height: 300px;
 				margin: 20vh auto;}`;
 		const rule2 = `#popup-backdrop #popup .card-body {
 			  overflow-y: hidden;}`;
@@ -95,6 +116,7 @@ export class PopupDialog {
 		const rules: string[] = [rule0, rule1, rule2, rule3, rule4];
 		PopupDialog.addStyleSheet(rules);
 	}
+
 	private initStates() {
 		this.store.registerState("isPopUp", false);
 	}
@@ -102,6 +124,7 @@ export class PopupDialog {
 	public getBackdrop(): HTMLElement {
 		return this.backdrop;
 	}
+
 	public static addStyleSheet(rules: string[]) {
 		const style = document.createElement("style") as HTMLStyleElement;
 		style.appendChild(document.createTextNode(""));

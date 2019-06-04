@@ -11,7 +11,7 @@ const updatePollId = () => {
 		pollAnchor.childNodes.forEach((e, i) => {
 			const choice = e as HTMLLIElement;
 			e.addEventListener("click", ev => {
-				const id = (event.target as HTMLElement).parentElement.attributes.getNamedItem("data-id").value;
+				const id = (ev.target as HTMLElement).parentElement.attributes.getNamedItem("data-id").value;
 				vote(id, choice.innerText, i + 1);
 			});
 		});
@@ -47,13 +47,28 @@ const updateIndicator = () => {
 		}
 	});
 };
+document.addEventListener("keydown", ev => {
+	if (ev.key == "Escape") {
+		if (store.getState("isPopUp")) {
+			popupDialog.close.click();
+		}
+	}
+});
 
 const initialState: State = {
 	"currentTemplate": null,
+	"key": ""
 };
+
 const store = new Store(initialState);
 store.subscribe("currentTemplate", [updateTemplateContainer, updateIndicator, updatePollId]);
 const popupDialog = new PopupDialog(store);
+const backdrop = popupDialog.getBackdrop();
+backdrop.addEventListener("click", ev => {
+	if (ev.target == backdrop) {
+		popupDialog.close.click();
+	}
+});
 const indicatorContainer = document.querySelector("#indicator-container") as HTMLDivElement;
 const section = document.querySelector("main") as HTMLDivElement;
 
@@ -71,7 +86,6 @@ indicatorContainer.addEventListener("click", ev => {
 	}
 });
 
-
 window.onload = () => {
 	ipcRenderer.send("template-get", 0);
 };
@@ -80,17 +94,31 @@ ipcRenderer.on("template-reset", () => {
 	section.innerHTML = "";
 });
 
+ipcRenderer.on("key-set", (event: any, data: string) => {
+	store.setState("key", data);
+});
+
 ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
 	store.setState("currentTemplate", data);
 });
 
+
+/**
+ * Function being called from renderer process on vote option click
+ * Vote option must have:
+ * @param id - id(index) of a student
+ * @param choice - text of vote choice
+ * @param choiceIndex - index of vote choice
+ */
 const vote = (id: string, choice: string, choiceIndex: number) => {
-	popupDialog.open("Are you sure?", "<div class=\"input-group mb-3\">\n" +
+	popupDialog.open("Da li ste sigurni?", "<div>" +
+		"<div class=\"alert-warning p-2\">Vas izbor je:&nbsp;&nbsp;'" + choice + "'</div><br>" +
+		"<div class=\"input-group mb-3\">\n" +
 		"  <div class=\"input-group-prepend\">\n" +
-		"		<span class=\"input-group-text\" for=\"identity-input\">ID: </span>\n" +
+		"		<span class=\"input-group-text\" for=\"identity-input\">Indeks: </span>\n" +
 		"	</div>\n" +
-		"	<input type=\"text\" class=\"form-control\" placeholder=\"Username\" aria-label=\"Username\" id= \"identity-input\">\n" +
-		"</div>\n", async () => {
+		"	<input type=\"text\" class=\"form-control\" placeholder=\"Indeks studenta\" aria-label=\"Indeks studenta\" id= \"identity-input\">\n" +
+		"</div></div>", async () => {
 		const identity = (<HTMLInputElement>document.querySelector("#identity-input")).value;
 		if (identity != "") {
 			const url = "http://127.0.0.1:5000/vote/" + id;
@@ -98,6 +126,7 @@ const vote = (id: string, choice: string, choiceIndex: number) => {
 				headers: new Headers({
 					"Content-Type": "application/x-www-form-urlencoded",
 					"Access-Control-Allow-Origin": "*",
+					"Authorization": store.getState("key"),
 				}),
 				method: "POST",
 				body: `choice=${choice}&choiceId=${choiceIndex}&studentIndex=${identity}`,
@@ -105,7 +134,11 @@ const vote = (id: string, choice: string, choiceIndex: number) => {
 			const json = await resp.json();
 			console.log(json);
 		} else {
-			popupDialog.open("Warrning","FirstName.LastName.Index");
+			// TODO: error handlling
+			popupDialog.close.click();
+			setTimeout(() => {
+				popupDialog.openType("Upozorenje", "Uneli ste pogresne podatke!", "danger");
+			}, 500);
 		}
 	});
 };

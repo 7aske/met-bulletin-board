@@ -4,11 +4,30 @@ class PopupDialog {
     constructor(store) {
         this.store = store;
         this.initStates();
-        this.initStyleSheet();
+        PopupDialog.initStyleSheet();
         this.backdrop = PopupDialog.initBackdrop("popup-backdrop");
         this.popup = null;
         this.confirm = null;
         this.close = null;
+    }
+    openType(title, body, type, cb) {
+        this.createPopup(title, body, type);
+        this.close.addEventListener("click", () => {
+            this.destroyPopup();
+        });
+        if (cb) {
+            this.confirm.addEventListener("click", () => {
+                cb();
+                this.destroyPopup();
+            });
+            this.confirm.style.display = "inline-block";
+        }
+        setTimeout(() => {
+            this.popup.style.transform = "translateY(10vh)";
+        }, 10);
+        this.backdrop.style.visibility = "visible";
+        this.backdrop.style.opacity = "1";
+        this.store.setState("isPopUp", true);
     }
     open(title, body, cb) {
         this.createPopup(title, body);
@@ -44,19 +63,19 @@ class PopupDialog {
             this.backdrop.style.color = "0";
         }, 100);
     }
-    createPopup(title, body) {
-        const html = `<div id="popup" class="card"><div class="card-header"><h5 class="card-title mb-0">${title}</h5>
+    createPopup(title, body, type) {
+        const html = `<div id="popup" class="card"><div class="card-header alert-${type ? type : "secondary"}"><h5 class="card-title mb-0">${title}</h5>
 						</div><div class="card-body">${body}</div>
 						<div class="card-footer">
 							<button class="btn btn-secondary" id="popupClose">Zatvori</button>
-							<button class="btn btn-primary" id="popupConfirm">Potvrdi</button>
+							<button class="btn btn-success" id="popupConfirm">Potvrdi</button>
 						</div></div>`;
         this.backdrop.innerHTML += html;
         this.popup = document.querySelector("#popup");
         this.confirm = document.querySelector("#popupConfirm");
         this.close = document.querySelector("#popupClose");
     }
-    initStyleSheet() {
+    static initStyleSheet() {
         const rule0 = `#popup-backdrop {
 				transition: 100ms all;
 				visibility: hidden;
@@ -73,8 +92,9 @@ class PopupDialog {
 				transition: 200ms -webkit-transform;
 				transition: 200ms transform;
 				transition: 200ms transform, 200ms -webkit-transform;
-				width: 600px;
-				height: 300px;
+				width: 400px;
+				min-height: 100px;
+				max-height: 300px;
 				margin: 20vh auto;}`;
         const rule2 = `#popup-backdrop #popup .card-body {
 			  overflow-y: hidden;}`;

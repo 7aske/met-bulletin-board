@@ -1,5 +1,6 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, session } from "electron";
 import dotenv from "dotenv";
+import crypto from "crypto";
 import { ChildProcess, spawn } from "child_process";
 import { basename, extname, resolve } from "path";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
@@ -11,9 +12,10 @@ export const CONFIG_DIR = resolve(process.cwd(), "config/config.cfg");
 
 if (dotenv.config({path: CONFIG_DIR}).error)
 	throw "Invalid config";
-
 export const TEMPLATE_TIMEOUT: number = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
+export const KEY_TIMEOUT: number = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
 
+const hash = crypto.createHash("sha256");
 let temp_index = 0;
 let db = null;
 let server: ChildProcess = null;
@@ -22,18 +24,22 @@ let window: BrowserWindow = null;
 export let templates: string[] = [];
 
 const main = async () => {
+	const key = generateKey();
+	let cookie = {url: "http://127.0.0.1/", path: "/vote", value: "Auth: " + key};
 	initDirs();
 	db = await initDatabase();
 	templates = readTemplates();
-	server = startServer();
+	server = startServer(key);
 	window = new BrowserWindow({
 		width: 1440,
 		height: 900,
 		title: "Metropolitan Bulletin Board",
 	});
+
 	window.loadFile(INDEX);
 	window.on("ready-to-show", window.show);
 
+	setTimeout(() => window.webContents.send("key-set", key), 2000);
 	const updateTempates = setInterval(() => templates = readTemplates(), TEMPLATE_TIMEOUT);
 	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
 };
@@ -46,8 +52,14 @@ const close = () => {
 	process.exit(0);
 };
 
-const startServer = () => {
-	return spawn("node", ["dist/server/server.js"], {stdio: "inherit"});
+const generateKey = (): string => {
+	const randnum = Math.random();
+	hash.update(randnum.toString());
+	return hash.digest().toString("hex");
+};
+
+const startServer = (key: string) => {
+	return spawn("node", ["dist/server/server.js"], {stdio: "inherit", env: {"KEY": key}});
 };
 
 const initDirs = () => {
