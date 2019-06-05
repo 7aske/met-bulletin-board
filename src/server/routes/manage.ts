@@ -3,9 +3,11 @@ import { initDatabase } from "../../main/database/initDatabase";
 import { getPoll, getPolls, removePoll } from "../../main/database/actions/pollActions";
 import { getVoteCount, getVotes, resetVotes } from "../../main/database/actions/voteActions";
 import { resolve } from "path";
+import { constants as STATUS } from "http2";
+import { readdirSync, unlinkSync } from "fs";
 
 const CLIENT_ROOT: string = resolve(process.cwd(), "dist/server/client");
-
+const TEMPLATES_DIR:string = resolve(process.cwd(), "templates");
 const manage = Router();
 
 manage.get("/", (req: Request, res: Response, next: NextFunction) => {
@@ -63,10 +65,16 @@ manage.delete("/polls/:id", async (req, res) => {
 	const id = req.params.id;
 	const db = await initDatabase();
 	const r = await removePoll(db, id);
+	const templates = readdirSync(TEMPLATES_DIR);
+	templates.forEach(async tmp =>{
+		if (tmp.startsWith(id) && tmp.endsWith(".html")){
+			unlinkSync(resolve(TEMPLATES_DIR, tmp))
+		}
+	});
 	if (r) {
-		res.json(r);
+		res.status(STATUS.HTTP_STATUS_OK).json(r);
 	} else {
-		res.json({});
+		res.status(STATUS.HTTP_STATUS_NOT_FOUND).json({});
 	}
 });
 

@@ -113,7 +113,8 @@ window.onload = () => {
     electron_1.ipcRenderer.send("template-get", 0);
 };
 electron_1.ipcRenderer.on("template-reset", () => {
-    section.innerHTML = "";
+    const data = { id: "", index: 0, template: Buffer.from("", "utf-8"), total: 0 };
+    store.setState("currentTemplate", data);
 });
 electron_1.ipcRenderer.on("key-set", (event, data) => {
     store.setState("key", data);
@@ -129,6 +130,7 @@ electron_1.ipcRenderer.on("template-set", (event, data) => {
  * @param choiceIndex - index of vote choice
  */
 const vote = (id, choice, choiceIndex) => {
+    console.log("wtf");
     popupDialog.open("Da li ste sigurni?", "<div>" +
         "<div class=\"alert-warning p-2\">Vas izbor je:&nbsp;&nbsp;'" + choice + "'</div><br>" +
         "<div class=\"input-group mb-3\">\n" +
@@ -159,8 +161,9 @@ const vote = (id, choice, choiceIndex) => {
                 popupDialog.close.click();
                 setTimeout(() => {
                     popupDialog.openType("Obavestenje", "Uspesno ste glasali!", "success");
+                    updateTemplateContainer();
+                    updatePollId();
                 }, 500);
-                updateTemplateContainer();
             }
         }
         else {

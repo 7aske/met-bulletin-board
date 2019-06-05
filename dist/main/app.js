@@ -24,8 +24,8 @@ exports.CONFIG_DIR = path_1.resolve(process.cwd(), "config/config.cfg");
 if (dotenv_1.default.config({ path: exports.CONFIG_DIR }).error)
     throw "Invalid config";
 exports.TEMPLATE_TIMEOUT = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
+exports.WATCHER_TIMEOUT = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
 exports.KEY_TIMEOUT = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
-const hash = crypto_1.default.createHash("sha256");
 let temp_index = 0;
 let db = null;
 let server = null;
@@ -45,7 +45,7 @@ const main = () => __awaiter(this, void 0, void 0, function* () {
     window.loadFile(exports.INDEX);
     window.on("ready-to-show", window.show);
     window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
-    const updateTempates = setInterval(() => exports.templates = readTemplates(), exports.TEMPLATE_TIMEOUT);
+    const updateTempates = setInterval(() => exports.templates = readTemplates(), exports.WATCHER_TIMEOUT);
     const slideshowInterval = setInterval(changeSlide, exports.TEMPLATE_TIMEOUT);
 });
 const close = () => {
@@ -55,6 +55,7 @@ const close = () => {
     process.exit(0);
 };
 const generateKey = () => {
+    const hash = crypto_1.default.createHash("sha256");
     const randnum = Math.random();
     hash.update(randnum.toString());
     return hash.digest().toString("hex");
@@ -110,7 +111,7 @@ const changeSlide = () => {
         }
     }
     else {
-        window.webContents.send("template-set", { template: [], index: 0, total: 0 });
+        window.webContents.send("template-reset");
     }
 };
 electron_1.ipcMain.on("template-get", (event, data) => {

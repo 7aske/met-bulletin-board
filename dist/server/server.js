@@ -15,6 +15,6 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const server = express_1.default();
 server.use(cookie_parser_1.default());
 server.use(body_parser_1.default.urlencoded({ extended: true }));
-server.use(body_parser_1.default.json({ limit: "5mb" }));
+server.use(body_parser_1.default.json({ limit: "10mb" }));
 server.use("/", router_1.default);
 server.listen(PORT, () => console.log(`Server started on port ${PORT} with pid ${process.pid}`));

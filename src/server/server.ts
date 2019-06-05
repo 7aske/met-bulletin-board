@@ -12,7 +12,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const server: express.Application = express();
 server.use(cookieParser());
 server.use(bodyParser.urlencoded({extended: true}));
-server.use(bodyParser.json({limit:"5mb"}));
+server.use(bodyParser.json({limit:"10mb"}));
 server.use("/", router);
 
 server.listen(PORT, () => console.log(`Server started on port ${PORT} with pid ${process.pid}`));

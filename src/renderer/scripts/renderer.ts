@@ -110,7 +110,8 @@ window.onload = () => {
 };
 
 ipcRenderer.on("template-reset", () => {
-	section.innerHTML = "";
+	const data: TemplateDataType = {id: "", index: 0, template: Buffer.from("", "utf-8"), total: 0};
+	store.setState("currentTemplate", data);
 });
 
 ipcRenderer.on("key-set", (event: any, data: string) => {
@@ -130,6 +131,7 @@ ipcRenderer.on("template-set", (event: any, data: TemplateDataType) => {
  * @param choiceIndex - index of vote choice
  */
 const vote = (id: string, choice: string, choiceIndex: number) => {
+	console.log("wtf");
 	popupDialog.open("Da li ste sigurni?", "<div>" +
 		"<div class=\"alert-warning p-2\">Vas izbor je:&nbsp;&nbsp;'" + choice + "'</div><br>" +
 		"<div class=\"input-group mb-3\">\n" +
@@ -149,7 +151,8 @@ const vote = (id: string, choice: string, choiceIndex: number) => {
 				}),
 				method: "POST",
 				body: `choice=${choice}&choiceId=${choiceIndex}&studentId=${identity}`,
-			});if (resp.status == 400) {
+			});
+			if (resp.status == 400) {
 				popupDialog.close.click();
 				setTimeout(() => {
 					popupDialog.openType("Greska", "Vec ste glasali!", "danger");
@@ -158,8 +161,9 @@ const vote = (id: string, choice: string, choiceIndex: number) => {
 				popupDialog.close.click();
 				setTimeout(() => {
 					popupDialog.openType("Obavestenje", "Uspesno ste glasali!", "success");
+					updateTemplateContainer();
+					updatePollId();
 				}, 500);
-				updateTemplateContainer();
 			}
 		} else {
 			popupDialog.close.click();

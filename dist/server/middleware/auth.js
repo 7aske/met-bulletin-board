@@ -7,6 +7,8 @@ const express_1 = require("express");
 const crypto_1 = __importDefault(require("crypto"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const http2_1 = require("http2");
+const path_1 = require("path");
+const CLIENT_ROOT = path_1.resolve(process.cwd(), "dist/server/client");
 const auth = express_1.Router();
 const hashPass = (pass) => {
     const hash = crypto_1.default.createHash("sha256");
@@ -14,14 +16,14 @@ const hashPass = (pass) => {
     return hash.digest("hex");
 };
 const checkLogin = (username, passwd) => {
-    return username == process.env.DB_USER && hashPass(process.env.DB_USER) == hashPass(passwd);
+    return username.toLowerCase() == process.env.DB_USER.toLowerCase() && hashPass(process.env.DB_USER) == hashPass(passwd);
 };
 auth.get("/login", (req, res) => {
     const token = req.cookies["Token"];
     const secret = process.env.SECRET;
     const verifyopts = { algorithm: "RS512" };
     if (!token) {
-        res.send(loginPage);
+        res.sendFile(path_1.resolve(CLIENT_ROOT, "views/login.html"));
         return;
     }
     try {
@@ -31,12 +33,12 @@ auth.get("/login", (req, res) => {
         }
         else {
             res.clearCookie("Token");
-            res.send(loginPage);
+            res.sendFile(path_1.resolve(CLIENT_ROOT, "views/login.html"));
         }
     }
     catch (e) {
         res.clearCookie("Token");
-        res.send(loginPage);
+        res.sendFile(path_1.resolve(CLIENT_ROOT, "views/login.html"));
     }
 });
 auth.post("/login", (req, res) => {
@@ -64,6 +66,10 @@ auth.get("/*", (req, res, next) => {
     const token = req.cookies["Token"];
     const auth = req.headers["authorization"];
     const key = process.env.KEY;
+    if (req.url == "/images/default-bg.png") {
+        res.sendFile(path_1.resolve(CLIENT_ROOT, "images/default-bg.png"));
+        return;
+    }
     if (auth) {
         if (auth == key) {
             next();
@@ -89,52 +95,4 @@ auth.get("/*", (req, res, next) => {
         res.redirect("/login");
     }
 });
-const loginPage = "<!DOCTYPE html>\n" +
-    "<html lang=\"en\">\n" +
-    "        <head>\n" +
-    "                <meta charset=\"UTF-8\" />\n" +
-    "                <meta\n" +
-    "                        name=\"viewport\"\n" +
-    "                        content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\"\n" +
-    "                />\n" +
-    "                <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\" />\n" +
-    "                <title>Deployment Server</title>\n" +
-    "                <style>\n" +
-    "                        * {\n" +
-    "                                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif,\n" +
-    "                                        \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n" +
-    "                        }\n" +
-    "                        body,\n" +
-    "                        html {\n" +
-    "                                width: 100%;\n" +
-    "                                overflow-x: hidden;\n" +
-    "                                background-color: #222222;\n" +
-    "                                color: #ffffff;\n" +
-    "                        }\n" +
-    "                        input {\n" +
-    "                                margin-left: -8px;\n" +
-    "                                border-radius: 8px;\n" +
-    "                                padding: 10px;\n" +
-    "                                border: 2px solid #666666;\n" +
-    "                                font-size: 24px;\n" +
-    "                                margin-bottom: 10px;\n" +
-    "                        }\n" +
-    "                        button {\n" +
-    "                                font-size: 24px;\n" +
-    "                                border: 2px solid #666666;\n" +
-    "                                border-radius: 8px;\n" +
-    "                                padding: 10px 25px;\n" +
-    "                                background-color: gold;\n" +
-    "                        }\n" +
-    "                </style>\n" +
-    "        </head>\n" +
-    "        <body style=\"text-align: center;\">\n" +
-    "                <h1>Admin Login</h1>\n" +
-    "                <form method=\"POST\" action=\"/login\">\n" +
-    "                        <input type=\"text\" name=\"mbb-username\" placeholder=\"Username\" /><br />\n" +
-    "                        <input type=\"password\" name=\"mbb-passwd\" placeholder=\"Password\" /><br />\n" +
-    "                        <button type=\"submit\">Login</button>\n" +
-    "                </form>\n" +
-    "        </body>\n" +
-    "</html>";
 exports.default = auth;

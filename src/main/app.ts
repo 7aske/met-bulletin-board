@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, session } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import dotenv from "dotenv";
 import crypto from "crypto";
 import { ChildProcess, spawn } from "child_process";
@@ -13,9 +13,9 @@ export const CONFIG_DIR = resolve(process.cwd(), "config/config.cfg");
 if (dotenv.config({path: CONFIG_DIR}).error)
 	throw "Invalid config";
 export const TEMPLATE_TIMEOUT: number = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
+export const WATCHER_TIMEOUT: number = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
 export const KEY_TIMEOUT: number = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
 
-const hash = crypto.createHash("sha256");
 let temp_index = 0;
 let db = null;
 let server: ChildProcess = null;
@@ -37,11 +37,10 @@ const main = async () => {
 
 	window.loadFile(INDEX);
 	window.on("ready-to-show", window.show);
-	window.webContents.on("dom-ready", ()=>window.webContents.send("key-set", key));
-	const updateTempates = setInterval(() => templates = readTemplates(), TEMPLATE_TIMEOUT);
+	window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
+	const updateTempates = setInterval(() => templates = readTemplates(), WATCHER_TIMEOUT);
 	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
 };
-
 
 const close = () => {
 	if (server != null)
@@ -51,6 +50,7 @@ const close = () => {
 };
 
 const generateKey = (): string => {
+	const hash = crypto.createHash("sha256");
 	const randnum = Math.random();
 	hash.update(randnum.toString());
 	return hash.digest().toString("hex");
@@ -109,10 +109,9 @@ const changeSlide = () => {
 			}
 		}
 	} else {
-		window.webContents.send("template-set", {template: [], index: 0, total: 0});
+		window.webContents.send("template-reset");
 	}
 };
-
 ipcMain.on("template-get", (event: any, data: any) => {
 	if (data < templates.length) {
 		const template = templates[data];
@@ -129,5 +128,6 @@ ipcMain.on("template-get", (event: any, data: any) => {
 		}
 	}
 });
+
 app.on("ready", main);
 app.on("window-all-closed", close);

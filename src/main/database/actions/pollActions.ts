@@ -7,7 +7,7 @@ export const addPoll = async (db: LowdbAsync<PollsSchemaType>, poll: Poll) => {
 };
 
 export const getPolls = async (db: LowdbAsync<PollsSchemaType>) => {
-	return await db.get("polls").find().value();
+	return await db.get("polls").value();
 };
 
 export const getPoll = async (db: LowdbAsync<PollsSchemaType>, id: string) => {

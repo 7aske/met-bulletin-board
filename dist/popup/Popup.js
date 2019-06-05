@@ -21,11 +21,9 @@ class PopupDialog {
                 this.destroyPopup();
             });
             this.confirm.style.display = "inline-block";
-            setTimeout(() => this.close.click(), 20000);
         }
         else {
             this.confirm.style.display = "none";
-            setTimeout(() => this.close.click(), 10000);
         }
         setTimeout(() => {
             this.popup.style.transform = "translateY(10vh)";
@@ -45,11 +43,9 @@ class PopupDialog {
                 this.destroyPopup();
             });
             this.confirm.style.display = "inline-block";
-            setTimeout(() => this.close.click(), 20000);
         }
         else {
             this.confirm.style.display = "none";
-            setTimeout(() => this.close.click(), 20000);
         }
         setTimeout(() => {
             this.popup.style.transform = "translateY(10vh)";
@@ -62,9 +58,12 @@ class PopupDialog {
         this.popup.style.transform = "translateY(-10vh)";
         this.backdrop.style.backgroundColor = "background-color: rgba(0, 0, 0, 0)";
         setTimeout(() => {
-            this.confirm.remove();
-            this.close.remove();
-            this.popup.remove();
+            if (this.confirm)
+                this.confirm.remove();
+            if (this.close)
+                this.close.remove();
+            if (this.popup)
+                this.popup.remove();
             this.popup = null;
             this.confirm = null;
             this.close = null;

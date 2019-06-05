@@ -12,7 +12,7 @@ exports.addPoll = (db, poll) => __awaiter(this, void 0, void 0, function* () {
     yield db.get("polls").push(poll.json()).write();
 });
 exports.getPolls = (db) => __awaiter(this, void 0, void 0, function* () {
-    return yield db.get("polls").find().value();
+    return yield db.get("polls").value();
 });
 exports.getPoll = (db, id) => __awaiter(this, void 0, void 0, function* () {
     return yield db.get("polls").find({ id: id }).value();

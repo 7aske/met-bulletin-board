@@ -13,7 +13,10 @@ const initDatabase_1 = require("../../main/database/initDatabase");
 const pollActions_1 = require("../../main/database/actions/pollActions");
 const voteActions_1 = require("../../main/database/actions/voteActions");
 const path_1 = require("path");
+const http2_1 = require("http2");
+const fs_1 = require("fs");
 const CLIENT_ROOT = path_1.resolve(process.cwd(), "dist/server/client");
+const TEMPLATES_DIR = path_1.resolve(process.cwd(), "templates");
 const manage = express_1.Router();
 manage.get("/", (req, res, next) => {
     if (req.path == "/") {
@@ -71,11 +74,17 @@ manage.delete("/polls/:id", (req, res) => __awaiter(this, void 0, void 0, functi
     const id = req.params.id;
     const db = yield initDatabase_1.initDatabase();
     const r = yield pollActions_1.removePoll(db, id);
+    const templates = fs_1.readdirSync(TEMPLATES_DIR);
+    templates.forEach((tmp) => __awaiter(this, void 0, void 0, function* () {
+        if (tmp.startsWith(id) && tmp.endsWith(".html")) {
+            fs_1.unlinkSync(path_1.resolve(TEMPLATES_DIR, tmp));
+        }
+    }));
     if (r) {
-        res.json(r);
+        res.status(http2_1.constants.HTTP_STATUS_OK).json(r);
     }
     else {
-        res.json({});
+        res.status(http2_1.constants.HTTP_STATUS_NOT_FOUND).json({});
     }
 }));
 manage.delete("/polls/:id/votes", (req, res) => __awaiter(this, void 0, void 0, function* () {

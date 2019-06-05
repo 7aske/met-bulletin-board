@@ -13,20 +13,23 @@ const http2_1 = require("http2");
 const initDatabase_1 = require("../../main/database/initDatabase");
 const Vote_1 = require("../../main/database/schema/Vote");
 const voteActions_1 = require("../../main/database/actions/voteActions");
+const validate = (pollId, choiceId, studentId) => {
+    return pollId != null && choiceId != null && studentId != null;
+};
 const vote = express_1.Router();
 vote.get("/", (req, res) => {
-    res.status(http2_1.constants.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({ status: "UNAUTHORIZED" }));
+    res.status(http2_1.constants.HTTP_STATUS_NOT_FOUND).send(JSON.stringify({ status: "NOT FOUND" }));
 });
 vote.post("/:pollId", (req, res) => __awaiter(this, void 0, void 0, function* () {
     const auth = req.headers["authorization"];
+    console.log(req.body);
     if (auth == process.env.KEY) {
-        console.log(req.body);
         const pollId = req.params["pollId"];
         const choiceId = req.body["choiceId"];
         const studentId = req.body["studentId"];
         const db = yield initDatabase_1.initDatabase();
         const newVote = new Vote_1.Vote(studentId, choiceId);
-        if (yield voteActions_1.hasVoted(db, pollId, studentId)) {
+        if ((yield voteActions_1.hasVoted(db, pollId, studentId)) && !validate(pollId, choiceId, studentId)) {
             res.status(http2_1.constants.HTTP_STATUS_BAD_REQUEST).send(JSON.stringify({ status: "BAD REQUEST" }));
         }
         else {

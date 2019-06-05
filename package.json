@@ -5,7 +5,7 @@
   "main": "dist/main/app.js",
   "scripts": {
     "start": "./node_modules/.bin/electron ./dist/main/app.js",
-    "server": "nodemon ./dist/server/server.js "
+    "server": "node ./dist/server/server.js "
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "@types/lowdb": "^1.0.9",
     "@types/node": "^12.0.2",
     "@types/shortid": "0.0.29",
-    "electron": "3.1.9"
+    "electron": "^3.1.9"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
