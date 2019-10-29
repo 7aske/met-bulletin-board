@@ -1,4 +1,34 @@
-<div class="homeWrapper">
-    <mat-progress-bar mode="determinate" [value]="progressValue"></mat-progress-bar>
-    <h1>Slidshow page</h1>
+<div class="homeWrapper" (mousemove)="stopSlideTimer()">
+    <div class="pageConrols">
+        <span class="pageIndexDot" *ngFor="let slide of slides;let i = index"
+            [ngClass]="{'active': i === stepper.selectedIndex }" (click)="stepper.selectedIndex = i"></span>
+    </div>
+    <mat-horizontal-stepper #stepper>
+        <mat-step *ngFor="let slide of slides">
+            <div class="pageWrapper" [ngStyle]="{ 'background-image': 'url(' + slide.slideImageUrl + ')'}">
+                <div class="pageContent">
+                    <h1 class="slideTitle">{{slide.slideTitle}}</h1>
+                    <div *ngIf="slide.poll != null" class="voteContainer">
+                        <h2>{{slide.poll.questionText}}</h2>
+                        <div class="pollWrapper">
+                            <mat-radio-group aria-label="Izaberite odgovor">
+                                <div *ngFor="let choice of slide.poll.questionOptions" class="pollChoice">
+                                    <mat-radio-button [value]="choice">
+                                        {{choice}}</mat-radio-button>
+                                </div>
+                            </mat-radio-group>
+                            <mat-divider></mat-divider>
+                            <div>
+                                <mat-form-field>
+                                    <input matInput placeholder="Index" value="" (keydown)="handleNumberInput($event)">
+                                </mat-form-field>
+                                <button mat-flat-button color="green">Glasaj!</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
 </div>
