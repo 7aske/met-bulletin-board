@@ -37,12 +37,16 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { LoginComponent } from './login/login.component';
+import { ManageComponent } from './manage/manage.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeSlidehowComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    LoginComponent,
+    ManageComponent
   ],
   imports: [
     BrowserModule,

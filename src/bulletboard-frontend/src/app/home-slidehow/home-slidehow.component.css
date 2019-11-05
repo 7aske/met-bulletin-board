@@ -1,116 +1,127 @@
-::ng-deep *{
+::ng-deep * {
     transition: ease 0.2s all !important;
-    font-family: Verdana,Geneva,sans-serif !important;
+    font-family: Verdana, Geneva, sans-serif !important;
 }
-::ng-deep .mat-horizontal-stepper-header-container{
+
+::ng-deep .mat-horizontal-stepper-header-container {
     display: none !important;
     /* display: initial; */
 }
 
-::ng-deep .mat-horizontal-content-container{
+::ng-deep .mat-horizontal-content-container {
     padding: 0 !important;
 }
 
-
-.pageWrapper{
+.pageWrapper {
     height: 100vh;
     overflow: auto;
 }
 
-.pageContent{
+.pageContent {
     margin-top: 5em;
 }
-.slideTitle{
+
+.slideTitle {
     margin-top: 5em;
     text-align: center;
     color: whitesmoke;
 }
 
-.voteContainer{
+.slideText {
+    float: right !important;
+    margin-top: 5em !important;
+    margin-right: 5em !important;
+    max-width: 50em !important;
+}
+
+.myContainer {
+    display: inline-block;
+    vertical-align: text-top;
     font-weight: bold;
     text-align: left;
     max-width: 30%;
     margin-left: 5em;
-    margin-top: 6em;
+    margin-top: 13em;
     padding: 2em;
-    background-color: rgba(255,255,255,0.5);
-    box-shadow: 10px 10px 21px -2px rgba(0,0,0,0.5);
-    -webkit-box-shadow: 10px 10px 21px -2px rgba(0,0,0,0.5);
-    -moz-box-shadow: 10px 10px 21px -2px rgba(0,0,0,0.5);
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 10px 10px 21px -2px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 10px 10px 21px -2px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 10px 10px 21px -2px rgba(0, 0, 0, 0.5);
+    float: left;
 }
 
-.voteContainer h2{
+.voteContainer h2 {
     text-align: center;
 }
 
-.voteContainer mat-form-field, .voteContainer button{
-    margin-top: 1em;
-    width: 6em;
-    text-align: center;
-    font-weight: bold;
+.voteContainer mat-form-field, .voteContainer button {
+    margin-top: 1em !important;
+    width: 6em !important;
+    text-align: center !important;
+    font-weight: bold !important;
 }
 
-.voteContainer mat-form-field+button{
+.voteContainer mat-form-field+button {
     margin-left: 2em;
 }
 
 ::ng-deep input.mat-input-element {
-color: #a70532 !important;
+    color: #a70532 !important;
 }
 
 ::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
-color: #a70532 !important;
+    color: #a70532 !important;
 }
 
-::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
-background-color: #a70532 !important;
+::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple {
+    background-color: #a70532 !important;
 }
 
-.pollWrapper{
+.pollWrapper {
     margin-left: 2em;
 }
 
-mat-divider{
+mat-divider {
     margin-top: 1em;
     margin-right: 2em;
 }
 
-.pollWrapper mat-divider+div{
+.pollWrapper mat-divider+div {
     margin-right: 2em;
     text-align: center;
 }
 
-.pollChoice + .pollChoice{
+.pollChoice+.pollChoice {
     margin-top: .5em;
 }
 
-.mat-raised-button.mat-green, .mat-flat-button.mat-green{
-background-color: #a70532;
-color: white;
+.mat-raised-button.mat-red, .mat-flat-button.mat-red {
+    background-color: #a70532;
+    color: white;
 }
 
-::ng-deep .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle , .mat-radio-outer-circle {
-border-color: #a70532 !important;
+::ng-deep .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle, .mat-radio-outer-circle {
+    border-color: #a70532 !important;
 }
 
-::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle{
-background-color: #a70532 !important;
+::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+    background-color: #a70532 !important;
 }
 
-.pageConrols{
-position: absolute;
-margin-top: 2em;
-text-align: center;
-width: 100%;
-opacity: 1 !important;
+.pageConrols {
+    position: absolute;
+    margin-top: 2em;
+    text-align: center;
+    width: 100%;
+    opacity: 1 !important;
 }
 
-.active{
+.active {
     opacity: 1 !important;
     background-color: #a70532 !important;
 }
 
-.pageIndexDot{
+.pageIndexDot {
     box-sizing: border-box;
     height: 1em;
     width: 1em;
@@ -118,14 +129,14 @@ opacity: 1 !important;
     border-radius: 50%;
     background-color: white;
     opacity: 0.5;
-    border:solid 1px #a70532 !important;
+    border: solid 1px #a70532 !important;
 }
 
-  .pageIndexDot:hover{
+.pageIndexDot:hover {
     opacity: 0.75;
-    border:solid 4px #a70532 !important;
+    border: solid 4px #a70532 !important;
 }
 
-  .pageIndexDot+.pageIndexDot{
+.pageIndexDot+.pageIndexDot {
     margin-left: 2.5em;
 }
