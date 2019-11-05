@@ -1,39 +1,36 @@
 <div class="homeWrapper" (mousemove)="stopSlideTimer()">
     <div class="pageConrols">
-        <span class="pageIndexDot" *ngFor="let slide of slides;let i = index"
-            [ngClass]="{'active': i === stepper.selectedIndex }" (click)="stepper.selectedIndex = i"></span>
+        <span class="pageIndexDot" *ngFor="let slide of slides;let i = index" [ngClass]="{'active': i === slideIndex }"
+            (click)="goToSlide(i);"></span>
     </div>
-    <mat-horizontal-stepper #stepper>
-        <mat-step *ngFor="let slide of slides">
-            <div class="pageWrapper" [ngStyle]="{ 'background-image': 'url(' + slide.slideImageUrl + ')'}">
-                <div class="pageContent">
-                    <div s>
-                        <h1 class="slideTitle">{{slide.slideTitle}}</h1>
-                        <div *ngIf="slide.poll != null" class="myContainer">
-                            <h2>{{slide.poll.questionText}}</h2>
-                            <div class="pollWrapper">
-                                <mat-radio-group aria-label="Izaberite odgovor">
-                                    <div *ngFor="let choice of slide.poll.questionOptions" class="pollChoice">
-                                        <mat-radio-button [value]="choice">
-                                            {{choice}}</mat-radio-button>
-                                    </div>
-                                </mat-radio-group>
-                                <mat-divider></mat-divider>
-                                <div>
-                                    <mat-form-field>
-                                        <input matInput placeholder="Index" value=""
-                                            (keydown)="handleNumberInput($event)">
-                                    </mat-form-field>
-                                    <button mat-flat-button color="red">Glasaj!</button>
+    <div *ngFor="let slide of slides;let i = index" class="slidePage" [ngClass]="{'slideShow': i == slideIndex }">
+        <div class="pageWrapper" [ngStyle]="{ 'background-image': 'url(' + slide.slideImageUrl + ')'}">
+            <div class="pageContent">
+                <div>
+                    <h1 class="slideTitle">{{slide.slideTitle}}</h1>
+                    <div *ngIf="slide.poll != null" class="myContainer">
+                        <h2>{{slide.poll.questionText}}</h2>
+                        <div class="pollWrapper">
+                            <mat-radio-group aria-label="Izaberite odgovor">
+                                <div *ngFor="let choice of slide.poll.questionOptions" class="pollChoice">
+                                    <mat-radio-button [value]="choice">
+                                        {{choice}}</mat-radio-button>
                                 </div>
+                            </mat-radio-group>
+                            <mat-divider></mat-divider>
+                            <div>
+                                <mat-form-field>
+                                    <input matInput placeholder="Index" value="" (keydown)="handleNumberInput($event)">
+                                </mat-form-field>
+                                <button mat-flat-button color="red">Glasaj!</button>
                             </div>
                         </div>
-                        <div class="myContainer slideText">
-                            <p>{{slide.slideBodyText}}</p>
-                        </div>
+                    </div>
+                    <div class="myContainer slideText">
+                        <p>{{slide.slideBodyText}}</p>
                     </div>
                 </div>
             </div>
-        </mat-step>
-    </mat-horizontal-stepper>
+        </div>
+    </div>
 </div>

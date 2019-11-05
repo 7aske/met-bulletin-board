@@ -12,6 +12,21 @@
     padding: 0 !important;
 }
 
+.slidePage {
+    transition: linear 1s all !important;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    opacity: 0;
+}
+
+.slideShow {
+    transition: linear 0.7s all !important;
+    opacity: 1 !important;
+}
+
 .pageWrapper {
     height: 100vh;
     overflow: auto;
@@ -43,7 +58,7 @@
     margin-left: 5em;
     margin-top: 13em;
     padding: 2em;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.75);
     box-shadow: 10px 10px 21px -2px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 10px 10px 21px -2px rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 10px 10px 21px -2px rgba(0, 0, 0, 0.5);
@@ -114,22 +129,24 @@ mat-divider {
     text-align: center;
     width: 100%;
     opacity: 1 !important;
+    z-index: 999;
 }
 
 .active {
     opacity: 1 !important;
-    background-color: #a70532 !important;
+    border: solid 10px #a70532 !important;
 }
 
 .pageIndexDot {
+    transition: linear 0.25s all !important;
     box-sizing: border-box;
-    height: 1em;
-    width: 1em;
+    height: 1.2em;
+    width: 1.2em;
     display: inline-block;
     border-radius: 50%;
     background-color: white;
-    opacity: 0.5;
-    border: solid 1px #a70532 !important;
+    opacity: 0.8;
+    border: solid 2px #a70532;
 }
 
 .pageIndexDot:hover {
