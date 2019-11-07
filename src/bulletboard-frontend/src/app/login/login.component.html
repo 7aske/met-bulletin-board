@@ -1,17 +1,19 @@
 <div class="loginPageWrapper">
     <div class="loginWrapper">
-        <div>
-            <mat-form-field>
-                <input matInput placeholder="Username" #user autofocus>
-            </mat-form-field>
-        </div>
+        <form action="login(user.value, pass.value)">
+            <div>
+                <mat-form-field>
+                    <input matInput placeholder="Username" #user autofocus>
+                </mat-form-field>
+            </div>
 
-        <div>
-            <mat-form-field>
-                <input matInput type="password" placeholder="Password" #pass>
-            </mat-form-field>
-        </div>
-        <button mat-flat-button color="red" (click)="login(user.value, pass.value)">Click me senpai!</button>
-        <p *ngIf="isNotFalid" class="errorLabel">username or password is incorrect</p>
+            <div>
+                <mat-form-field>
+                    <input matInput type="password" placeholder="Password" #pass>
+                </mat-form-field>
+            </div>
+            <button mat-flat-button color="red" type="submit">Click me senpai!</button>
+            <p *ngIf="isNotFalid" class="errorLabel">username or password is incorrect</p>
+        </form>
     </div>
 </div>

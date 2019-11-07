@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
+import { ApiService } from '../apis';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ManageAuthGuard implements CanActivate {
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private api: ApiService) { }
 
-    canActivate() {
-        let token = localStorage.getItem("auth-token");
-        let access = true; // send verification acess to backend
-        if (token != null && token !== "" && access) {
+    async canActivate() {
+        console.log("called");
+        if (this.api.authUserToken != null && this.api.authUserToken !== "" && await this.api.isLoginValid()) {
+            console.log("hit");
             return true;
         } else {
             this.router.navigate(['login']);

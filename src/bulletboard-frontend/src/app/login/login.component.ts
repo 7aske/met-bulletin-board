@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from '../apis';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -8,23 +10,30 @@ import { Component, OnInit } from '@angular/core';
 export class LoginComponent implements OnInit {
 
   isNotFalid = false;
-  constructor() { }
+  constructor(private api: ApiService, private router: Router) { }
 
   ngOnInit() {
   }
 
   login(username, password) {
-    console.log("login", username, password);
-    //TODO: call api for login and wait for return token
-    // let token = "4bce986eef6c454d248334d60cce8167"; // import api here
-    let token;
-    // let token;
-    if (token) {
-      localStorage.setItem("auth-token", token);
-    } else {
+    // console.log("login", username, password);
+    // this.api.requestLoginToken(username, password);
+    this.api.requestLoginToken(username, password).then(res => {
+      this.isNotFalid = false;
+      this.router.navigate(['manage']);
+      console.log(this.router);
+    }).catch(err => {
       this.isNotFalid = true;
       console.error("Access denied!");
-    }
+    });
+
+    // if (this.api.) {
+    // this.isNotFalid = false;
+    // this.router.navigate(['manage']);
+    // } else {/
+    // this.isNotFalid = true;
+    // console.error("Access denied!");
+    // }
   }
 
 }
