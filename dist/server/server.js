@@ -8,13 +8,19 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const router_1 = __importDefault(require("./router"));
-const path_1 = require("path");
-if (dotenv_1.default.config({ path: path_1.resolve(process.cwd(), "config/config.cfg") }).error)
+const cors_1 = __importDefault(require("cors"));
+const morgan_1 = __importDefault(require("morgan"));
+const log_1 = require("./middleware/log");
+if (dotenv_1.default.config().error)
     throw "Invalid config file";
+process.env.SECRET = process.env.SECRET || "ACAKULTIVATQR9";
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const server = express_1.default();
+server.use(cors_1.default());
 server.use(cookie_parser_1.default());
 server.use(body_parser_1.default.urlencoded({ extended: true }));
 server.use(body_parser_1.default.json({ limit: "10mb" }));
+server.use(log_1.log);
+server.use(morgan_1.default("dev"));
 server.use("/", router_1.default);
 server.listen(PORT, () => console.log(`Server started on port ${PORT} with pid ${process.pid}`));

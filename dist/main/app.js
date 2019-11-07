@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,17 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
-const dotenv_1 = __importDefault(require("dotenv"));
 const crypto_1 = __importDefault(require("crypto"));
 const child_process_1 = require("child_process");
 const path_1 = require("path");
 const fs_1 = require("fs");
 const initDatabase_1 = require("./database/initDatabase");
-exports.INDEX = path_1.resolve(process.cwd(), "dist/renderer/views/index.html");
+// export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
+exports.INDEX = path_1.resolve(process.cwd(), "dist/bulletboard-frontend/index.html");
 exports.TEMPLATES_DIR = path_1.resolve(process.cwd(), "templates");
 exports.CONFIG_DIR = path_1.resolve(process.cwd(), "config/config.cfg");
-if (dotenv_1.default.config({ path: exports.CONFIG_DIR }).error)
-    throw "Invalid config";
 exports.TEMPLATE_TIMEOUT = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
 exports.WATCHER_TIMEOUT = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
 exports.KEY_TIMEOUT = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
@@ -31,7 +30,7 @@ let db = null;
 let server = null;
 let window = null;
 exports.templates = [];
-const main = () => __awaiter(this, void 0, void 0, function* () {
+const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const key = generateKey();
     initDirs();
     db = yield initDatabase_1.initDatabase();
@@ -47,6 +46,12 @@ const main = () => __awaiter(this, void 0, void 0, function* () {
     window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
     const updateTempates = setInterval(() => exports.templates = readTemplates(), exports.WATCHER_TIMEOUT);
     const slideshowInterval = setInterval(changeSlide, exports.TEMPLATE_TIMEOUT);
+    electron_1.session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+        //@ts-ignore
+        callback({
+            responseHeaders: Object.assign(Object.assign({}, details.responseHeaders), { 'Content-Security-Policy': ['default-src \'none\''] })
+        });
+    });
 });
 const close = () => {
     if (server != null)

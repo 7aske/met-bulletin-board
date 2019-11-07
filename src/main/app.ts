@@ -1,17 +1,15 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import dotenv from "dotenv";
+import { app, BrowserWindow, ipcMain, session } from "electron";
 import crypto from "crypto";
 import { ChildProcess, spawn } from "child_process";
 import { basename, extname, resolve } from "path";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { initDatabase } from "./database/initDatabase";
 
-export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
+// export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
+export const INDEX = resolve(process.cwd(), "dist/bulletboard-frontend/index.html");
 export const TEMPLATES_DIR = resolve(process.cwd(), "templates");
 export const CONFIG_DIR = resolve(process.cwd(), "config/config.cfg");
 
-if (dotenv.config({path: CONFIG_DIR}).error)
-	throw "Invalid config";
 export const TEMPLATE_TIMEOUT: number = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
 export const WATCHER_TIMEOUT: number = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
 export const KEY_TIMEOUT: number = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
@@ -40,6 +38,15 @@ const main = async () => {
 	window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
 	const updateTempates = setInterval(() => templates = readTemplates(), WATCHER_TIMEOUT);
 	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
+	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		//@ts-ignore
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				'Content-Security-Policy': ['default-src \'none\'']
+			}
+		})
+	})
 };
 
 const close = () => {
@@ -57,16 +64,16 @@ const generateKey = (): string => {
 };
 
 const startServer = (key: string) => {
-	return spawn("node", ["dist/server/server.js"], {stdio: "inherit", env: {"KEY": key}});
+	return spawn("node", ["dist/server/server.js"], { stdio: "inherit", env: { "KEY": key } });
 };
 
 const initDirs = () => {
 	if (!existsSync(TEMPLATES_DIR)) {
-		mkdirSync(TEMPLATES_DIR, {recursive: true});
+		mkdirSync(TEMPLATES_DIR, { recursive: true });
 	}
 
 	if (!existsSync(TEMPLATES_DIR)) {
-		mkdirSync(TEMPLATES_DIR, {recursive: true});
+		mkdirSync(TEMPLATES_DIR, { recursive: true });
 	}
 };
 

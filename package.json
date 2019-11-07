@@ -5,7 +5,7 @@
   "main": "dist/main/app.js",
   "scripts": {
     "start": "./node_modules/.bin/electron ./dist/main/app.js",
-    "server": "node ./dist/server/server.js "
+    "start-server": "nodemon -w ./dist ./dist/server/server.js"
   },
   "repository": {
     "type": "git",
@@ -31,15 +31,19 @@
     "electron": "^3.1.9"
   },
   "dependencies": {
-    "@angular/material": "^8.2.1",
+    "@types/cors": "^2.8.6",
+    "@types/morgan": "^1.7.37",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.3.1",
     "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
     "jquery": "^3.4.1",
     "jsonwebtoken": "^8.5.1",
     "lowdb": "^1.0.0",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.4",
     "popper.js": "^1.15.0",
     "shortid": "^2.2.14"
   }
