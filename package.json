@@ -5,7 +5,7 @@
   "main": "dist/main/app.js",
   "scripts": {
     "start": "./node_modules/.bin/electron ./dist/main/app.js",
-    "start-server": "nodemon -w ./dist ./dist/server/server.js"
+    "start-server": "echo '' > server.log && nodemon -w ./dist ./dist/server/server.js | tee server.log"
   },
   "repository": {
     "type": "git",

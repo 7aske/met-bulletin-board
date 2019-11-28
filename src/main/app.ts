@@ -3,19 +3,16 @@ import crypto from "crypto";
 import { ChildProcess, spawn } from "child_process";
 import { basename, extname, resolve } from "path";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
-import { initDatabase } from "./database/initDatabase";
 
 // export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
 export const INDEX = resolve(process.cwd(), "dist/bulletboard-frontend/index.html");
 export const TEMPLATES_DIR = resolve(process.cwd(), "templates");
-export const CONFIG_DIR = resolve(process.cwd(), "config/config.cfg");
 
-export const TEMPLATE_TIMEOUT: number = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
-export const WATCHER_TIMEOUT: number = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
-export const KEY_TIMEOUT: number = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
+// export const TEMPLATE_TIMEOUT: number = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
+// export const WATCHER_TIMEOUT: number = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
+// export const KEY_TIMEOUT: number = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
 
 let temp_index = 0;
-let db = null;
 let server: ChildProcess = null;
 let window: BrowserWindow = null;
 
@@ -24,7 +21,6 @@ export let templates: string[] = [];
 const main = async () => {
 	const key = generateKey();
 	initDirs();
-	db = await initDatabase();
 	templates = readTemplates();
 	server = startServer(key);
 	window = new BrowserWindow({
@@ -36,8 +32,6 @@ const main = async () => {
 	window.loadFile(INDEX);
 	window.on("ready-to-show", window.show);
 	window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
-	const updateTempates = setInterval(() => templates = readTemplates(), WATCHER_TIMEOUT);
-	const slideshowInterval = setInterval(changeSlide, TEMPLATE_TIMEOUT);
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		//@ts-ignore
 		callback({
@@ -91,7 +85,7 @@ const changeSlide = () => {
 			const template = resolve(TEMPLATES_DIR, currTemplate);
 			if (existsSync(template)) {
 				const filename = basename(template);
-				const td: TemplateDataType = {
+				const td: any = {
 					template: readFileSync(template),
 					index: temp_index,
 					total: tmp_len,
@@ -105,7 +99,7 @@ const changeSlide = () => {
 			const currTemplate = templates[temp_index];
 			const template = resolve(TEMPLATES_DIR, currTemplate);
 			if (existsSync(template)) {
-				const td: TemplateDataType = {
+				const td: any = {
 					template: readFileSync(template),
 					index: temp_index,
 					total: tmp_len,
@@ -124,7 +118,7 @@ ipcMain.on("template-get", (event: any, data: any) => {
 		const template = templates[data];
 		if (existsSync(template)) {
 			const filename = basename(template);
-			const td: TemplateDataType = {
+			const td: any = {
 				template: readFileSync(templates[data]),
 				index: data,
 				total: templates.length,
