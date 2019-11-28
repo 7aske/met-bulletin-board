@@ -1,6 +1,7 @@
 .idea
 node_modules
 config/*
+dist/*
 database/*
 templates/*
 config/config.cfg
