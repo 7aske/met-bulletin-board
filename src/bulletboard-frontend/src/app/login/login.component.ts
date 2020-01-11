@@ -16,24 +16,14 @@ export class LoginComponent implements OnInit {
   }
 
   login(username, password) {
-    // console.log("login", username, password);
     // this.api.requestLoginToken(username, password);
     this.api.requestLoginToken(username, password).then(res => {
       this.isNotFalid = false;
       this.router.navigate(['manage']);
-      console.log(this.router);
     }).catch(err => {
       this.isNotFalid = true;
       console.error("Access denied!");
     });
-
-    // if (this.api.) {
-    // this.isNotFalid = false;
-    // this.router.navigate(['manage']);
-    // } else {/
-    // this.isNotFalid = true;
-    // console.error("Access denied!");
-    // }
   }
 
 }

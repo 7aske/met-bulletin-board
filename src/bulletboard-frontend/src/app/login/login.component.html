@@ -1,6 +1,6 @@
 <div class="loginPageWrapper">
     <div class="loginWrapper">
-        <form action="login(user.value, pass.value)">
+        <form (ngSubmit)="login(user.value, pass.value)">
             <div>
                 <mat-form-field>
                     <input matInput placeholder="Username" #user autofocus>

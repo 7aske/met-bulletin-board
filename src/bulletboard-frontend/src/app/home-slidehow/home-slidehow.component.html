@@ -6,29 +6,32 @@
     <div *ngFor="let slide of slides;let i = index" class="slidePage" [ngClass]="{'slideShow': i == slideIndex }">
         <div class="pageWrapper" [ngStyle]="{ 'background-image': 'url(' + slide.slideImageUrl + ')'}">
             <div class="pageContent">
-                <div>
-                    <h1 class="slideTitle">{{slide.slideTitle}}</h1>
-                    <div *ngIf="slide.poll != null" class="myContainer">
-                        <h2>{{slide.poll.questionText}}</h2>
-                        <div class="pollWrapper">
-                            <mat-radio-group aria-label="Izaberite odgovor">
-                                <div *ngFor="let choice of slide.poll.questionOptions" class="pollChoice">
-                                    <mat-radio-button [value]="choice">
-                                        {{choice}}</mat-radio-button>
-                                </div>
-                            </mat-radio-group>
-                            <mat-divider></mat-divider>
-                            <div>
-                                <mat-form-field>
-                                    <input matInput placeholder="Index" value="" (keydown)="handleNumberInput($event)">
-                                </mat-form-field>
-                                <button mat-flat-button color="red">Glasaj!</button>
-                            </div>
+                <h1 class="slideTitle">{{slide.slideTitle}}</h1>
+                <div *ngIf="slide.poll != null" class="myContainer">
+                    <h2>{{slide.poll.questionText}}</h2>
+                    <div class="pollWrapper">
+                        <div>
+                            <mat-form-field>
+                                <mat-select #select>
+                                    <mat-option *ngFor="let choice of slide.poll.questionOptions" [value]='choice'>
+                                        {{choice}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
+                        <div>
+                            <mat-form-field>
+                                <input #index matInput placeholder="Index" value=""
+                                    (keydown)='handleNumberInput($event)' required>
+                            </mat-form-field>
+                        </div>
+                        <button mat-flat-button color="red"
+                            (click)="sendPollRes(index.value, select.value)">Glasaj!</button>
                     </div>
-                    <div class="myContainer slideText">
-                        <p>{{slide.slideBodyText}}</p>
-                    </div>
+                </div>
+                <div class="myContainer slideText" *ngIf="slide.slideBodyTitle != null">
+                    <h3>{{slide.slideBodyTitle}}</h3>
+                    <p>{{slide.slideBodyText}}</p>
                 </div>
             </div>
         </div>

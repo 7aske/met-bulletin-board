@@ -1,1 +1,26 @@
-<p>manage works!</p>
+<div class="manageWrapper">
+
+    <div id="menu">
+        <p style="font-weight: bold;margin-right: 1em;">ADMIN</p><button mat-raised-button color="warn">Logout</button>
+    </div>
+    <button mat-raised-button color="primary" class="createSlide">Create slide</button>
+
+    <div class="slideItemsWrapper">
+        <mat-card class="slideItem" *ngFor="let slide of slides;let i = index">
+            <mat-card-header>
+                <mat-card-title>{{slide.slideTitle}}</mat-card-title>
+                <mat-card-subtitle *ngIf="slide.slideBodyTitle != null">{{slide.slideBodyTitle}}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image [src]="slide.slideImageUrl" alt="Slide background image">
+            <mat-card-content>
+                <p *ngIf="slide.slideBodyText != null">
+                    {{getTrimmedText(slide.slideBodyText)}}
+                </p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="primary">Edit</button>
+                <button mat-raised-button color="warn" style="float: right;">Delete</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

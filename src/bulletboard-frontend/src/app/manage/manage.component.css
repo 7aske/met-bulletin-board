@@ -1,0 +1,32 @@
+.manageWrapper{
+    overflow: hidden;
+    background-color: whitesmoke;
+    height: 100%;
+}
+#menu{
+    width: 100%;
+    padding: 0.5em;
+    background-color: lightcoral;
+}
+#menu > *{
+    display: inline-block;
+}
+
+.createSlide{
+    margin: 2em;
+}
+
+.slideItemsWrapper{
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.slideItem{
+    max-width: 200px;
+    width: 100%;
+    display: inline-block;
+    margin: 1em;
+    vertical-align: top;
+}
