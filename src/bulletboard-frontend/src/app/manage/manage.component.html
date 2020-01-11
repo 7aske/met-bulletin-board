@@ -3,24 +3,50 @@
     <div id="menu">
         <p style="font-weight: bold;margin-right: 1em;">ADMIN</p><button mat-raised-button color="warn">Logout</button>
     </div>
-    <button mat-raised-button color="primary" class="createSlide">Create slide</button>
 
-    <div class="slideItemsWrapper">
-        <mat-card class="slideItem" *ngFor="let slide of slides;let i = index">
-            <mat-card-header>
-                <mat-card-title>{{slide.slideTitle}}</mat-card-title>
-                <mat-card-subtitle *ngIf="slide.slideBodyTitle != null">{{slide.slideBodyTitle}}</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image [src]="slide.slideImageUrl" alt="Slide background image">
-            <mat-card-content>
-                <p *ngIf="slide.slideBodyText != null">
-                    {{getTrimmedText(slide.slideBodyText)}}
-                </p>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-raised-button color="primary">Edit</button>
-                <button mat-raised-button color="warn" style="float: right;">Delete</button>
-            </mat-card-actions>
-        </mat-card>
-    </div>
+    <mat-tab-group>
+        <mat-tab label="Slides">
+            <button mat-raised-button color="primary" class="createSlide" (click)="openDialogSlide(null)">Create
+                slide</button>
+
+            <div class="slideItemsWrapper">
+                <mat-card class="slideItem" *ngFor="let slide of slides;">
+                    <mat-card-header>
+                        <mat-card-title>{{slide.slideTitle}}</mat-card-title>
+                        <mat-card-subtitle *ngIf="slide.slideBodyTitle != null">{{slide.slideBodyTitle}}
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <img mat-card-image [src]="slide.slideImageUrl" alt="Slide background image">
+                    <mat-card-content>
+                        <p *ngIf="slide.slideBodyText != null">
+                            {{getTrimmedText(slide.slideBodyText)}}
+                        </p>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-raised-button color="primary" (click)="openDialogSlide(slide)">Edit</button>
+                        <button mat-raised-button color="warn" style="float: right;"
+                            (click)="deleteSlide(slide.slideID)">Delete</button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Polls">
+            <button mat-raised-button color="primary" class="createSlide" (click)="openDialogPoll(null)">Create
+                poll</button>
+            <mat-list class="polls">
+                <div *ngFor="let slide of slides;">
+                    <mat-list-item *ngIf="slide.poll != null">
+                        <mat-icon mat-list-icon>done_outline</mat-icon>
+                        <h4 mat-line>{{slide.poll?.questionText}}
+                            <span><button mat-raised-button color="primary" (click)="openDialogPoll(slide?.poll)"
+                                    style="margin-right: 1em;margin-left: 2em;">Edit</button>
+                                <button mat-raised-button color="warn"
+                                    (click)='deletePoll(slide.poll?.questionID)'>Delete</button></span></h4>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                </div>
+            </mat-list>
+        </mat-tab>
+    </mat-tab-group>
 </div>

@@ -1,0 +1,30 @@
+.addOption{
+    color: royalblue;
+    vertical-align: middle;
+    font-size: 30px;
+    cursor: pointer;
+    vertical-align: initial;
+}
+
+.optItem{
+    padding: 0.2em;
+    width: 100%;
+    display: block;
+}
+
+.questOptions{
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 150px;
+}
+
+.optItem > i{
+    vertical-align: middle;
+    cursor: pointer;
+    margin-right: 0.5em;
+}
+
+.optItem > i:hover{
+    color: maroon;
+}

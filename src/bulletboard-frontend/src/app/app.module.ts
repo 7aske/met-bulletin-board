@@ -41,6 +41,9 @@ import { ErrorPageComponent } from './error-page/error-page.component';
 import { LoginComponent } from './login/login.component';
 import { ManageComponent } from './manage/manage.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ManageDialogComponent } from './manage/manage-dialog/manage-dialog.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ManagePollDialogComponent } from './manage/manage-poll-dialog/manage-poll-dialog.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +51,9 @@ import { HttpClientModule } from '@angular/common/http';
     HomeSlidehowComponent,
     ErrorPageComponent,
     LoginComponent,
-    ManageComponent
+    ManageComponent,
+    ManageDialogComponent,
+    ManagePollDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -85,7 +90,13 @@ import { HttpClientModule } from '@angular/common/http';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule
+  ],
+  entryComponents: [
+    ManageDialogComponent,
+    ManagePollDialogComponent
   ],
   providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
   bootstrap: [AppComponent]

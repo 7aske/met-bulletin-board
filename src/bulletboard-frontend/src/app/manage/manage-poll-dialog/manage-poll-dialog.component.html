@@ -1,0 +1,28 @@
+<div class="managePollWrapper">
+    <h1 mat-dialog-title>New/edit poll</h1>
+    <div>
+        <mat-form-field>
+            <input matInput placeholder="Question text" value="" #questText>
+        </mat-form-field>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div>
+        <mat-form-field>
+            <textarea matInput placeholder="Options" value="" #questOpt></textarea>
+        </mat-form-field>
+        <i (click)="addQuestOpt(questOpt)" class="material-icons addOption">add_circle</i>
+    </div>
+
+    <div class="questOptions">
+        <span class="optItem" *ngFor="let opt of poll.questionOptions;let i = index">
+            <i class="material-icons" (click)="removeQuestOpt(i)">delete_forever</i>{{opt}}</span>
+    </div>
+
+
+    <div mat-dialog-actions>
+        <button mat-raised-button class="actionBtn" color='primary' (click)='save(questText.value)'>Save</button>
+        <button mat-raised-button class="actionBtn" color='warn' (click)="close()">Close</button>
+    </div>
+</div>

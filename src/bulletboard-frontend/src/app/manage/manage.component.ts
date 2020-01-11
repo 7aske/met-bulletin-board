@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ManageDialogComponent } from './manage-dialog/manage-dialog.component';
+import { MatDialog } from '@angular/material';
+import { ManagePollDialogComponent } from './manage-poll-dialog/manage-poll-dialog.component';
 
 @Component({
   selector: 'app-manage',
@@ -15,13 +18,51 @@ export class ManageComponent implements OnInit {
     { slideID: 4, slideTitle: "Mnogo dobar title! #5", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 4, questionText: "Koliko puta pijes kafu na sat?", questionOptions: [1, 2, 3, 4, 5] } }
   ]
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
   }
 
   getTrimmedText(text: string) {
     return text.substring(0, 150) + "...";
+  }
+
+  getAllSlides() {
+
+  }
+
+  openDialogSlide(slide): void {
+    const dialogRef = this.dialog.open(ManageDialogComponent, {
+      width: '350px',
+      data: slide ? slide : ""
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.getAllSlides();
+    });
+  }
+
+  openDialogPoll(poll) {
+    const dialogRef = this.dialog.open(ManagePollDialogComponent, {
+      width: '350px',
+      data: poll ? poll : ""
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.getAllSlides();
+    });
+  }
+
+  deleteSlide(slideID) {
+    // call api to delete
+    console.log("slideID", slideID);
+
+  }
+
+  deletePoll(questionID) {
+    // call api to delete
+    console.log("questionID", questionID);
+
   }
 
 }

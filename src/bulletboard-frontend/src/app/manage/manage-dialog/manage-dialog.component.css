@@ -1,0 +1,11 @@
+.actionBtn{
+    width: 70px;
+}
+
+.actionBtn + .actionBtn{
+    margin-left:calc(100% - 140px);
+}
+
+mat-form-field{
+    widows: 200px;
+}
