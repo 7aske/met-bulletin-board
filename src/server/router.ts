@@ -1,5 +1,5 @@
 import { Router, static as expressStatic } from "express";
-import create from "./routes/create";
+import slide from "./routes/slide";
 import vote from "./routes/vote";
 import authentication from "./routes/authenticaton";
 import nodemodules from "./routes/nodemodules";
@@ -9,7 +9,7 @@ const router = Router();
 
 router.use(expressStatic(join(process.cwd(), "dist/server/client")));
 router.use("/vote", vote);
-router.use("/create", create);
+router.use("/slide", slide);
 router.use("/auth", authentication);
 router.use("/node_modules/*", nodemodules);
 
