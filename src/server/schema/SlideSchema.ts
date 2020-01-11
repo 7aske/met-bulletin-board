@@ -5,7 +5,7 @@ import { ISlide } from "../../@types/Slide";
 
 const SlideSchema = new mongoose.Schema(
 	{
-		slideID: {type: String, default: shortid.generate},
+		slideID: {type: String, default: shortid.generate, unique: true},
 		slideTitle: {type: String, required: true},
 		slideBodyTitle: {type: String, required: true},
 		slideBodyText: {type: String, required: true},

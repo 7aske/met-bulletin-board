@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { IPoll } from "./Poll";
+import { IQuestion } from "./Poll";
 
 export interface ISlide extends Document {
 	slideID: string;
@@ -7,6 +7,6 @@ export interface ISlide extends Document {
 	slideBodyTitle: string;
 	slideBodyText: string;
 	slideImageUrl: string;
-	poll: IPoll;
+	poll: IQuestion;
 }
 

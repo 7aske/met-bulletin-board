@@ -5,17 +5,25 @@ import { ISlide } from "../../@types/Slide";
 
 const slide = Router();
 
+
+/**
+ * Fetches all slides if no body supplied. Otherwise finds a slide by 'slideID' if JSON body supplied as follows:
+ *  {slideID: "slide_id"}
+ */
 slide.get("/", async (req, res) => {
 	const slideID = req.body["slideID"];
 	if (slideID) {
 		let slide = await SlideModel.findOne({slideID});
 		res.status(STATUS.HTTP_STATUS_OK).json(slide);
 	} else {
-		const slides = await SlideModel.find({});
+		const slides = await SlideModel.find();
 		res.status(STATUS.HTTP_STATUS_OK).json({slides});
 	}
 });
 
+/**
+ * Deletes the slide by given ID from request body.
+ */
 slide.delete("/", async (req, res) => {
 	const slideID: string = req.body["slideID"];
 	try {
@@ -27,7 +35,9 @@ slide.delete("/", async (req, res) => {
 	}
 });
 
-
+/**
+ * Updates the slide by slideID property. 'slideID' property is required.
+ */
 slide.put("/", async (req, res) => {
 	let slide: ISlide = req.body;
 	try {
@@ -39,7 +49,17 @@ slide.put("/", async (req, res) => {
 	}
 });
 
-
+/**
+ * Creates a new slide. JSON body should be as follows:
+ * 	{
+ *		slideID: {type: String, required: false},
+ *		slideTitle: {type: String, required: true},
+ *		slideBodyTitle: {type: String, required: true},
+ *		slideBodyText: {type: String, required: true},
+ *		slideImageUrl: {type: String, default: ""},
+ *		poll: {type: PollSchema, required: false},
+ *  }
+ */
 slide.post("/", async (req, res) => {
 	let slide: ISlide = req.body;
 	const slideDoc = new SlideModel(slide);
@@ -50,7 +70,6 @@ slide.post("/", async (req, res) => {
 		console.error(e);
 		res.status(STATUS.HTTP_STATUS_BAD_REQUEST).json(e);
 	}
-
 });
 
 export default slide;
