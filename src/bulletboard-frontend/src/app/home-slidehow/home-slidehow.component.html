@@ -4,7 +4,7 @@
             (click)="goToSlide(i);"></span>
     </div>
     <div *ngFor="let slide of slides;let i = index" class="slidePage" [ngClass]="{'slideShow': i == slideIndex }">
-        <div class="pageWrapper" [ngStyle]="{ 'background-image': 'url(' + slide.slideImageUrl + ')'}">
+        <div class="pageWrapper" [ngStyle]="{ 'background': getBackground(slide.slideImageUrl)}">
             <div class="pageContent">
                 <h1 class="slideTitle">{{slide.slideTitle}}</h1>
                 <div *ngIf="slide.poll != null" class="myContainer">
