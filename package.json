@@ -1,9 +1,11 @@
 {
   "name": "met-bulletin-board",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple bulletin board application for showing content over an Electron based interface window",
   "main": "dist/main/app.js",
   "scripts": {
+    "install-all": "npm -C ./src/bulletboard-frontend install && npm install && ./scripts/def_conf.sh && echo 'Done'",
+    "build": "cd ./src/bulletboard-frontend && ./node_modules/.bin/ng build --prod --outputPath=../../dist/bulletboard-frontend && cd ../../ && ./node_modules/.bin/tsc",
     "start": "./node_modules/.bin/electron ./dist/main/app.js",
     "start-dev": "NODE_ENV=dev ./node_modules/.bin/electron ./dist/main/app.js",
     "start-server": "nodemon -w ./dist ./dist/server/server.js | tee server.log",
@@ -33,6 +35,7 @@
     "@types/shortid": "0.0.29",
     "@types/cors": "^2.8.6",
     "@types/morgan": "^1.7.37",
+    "typescript": "^3.7.4",
     "electron": "^7.1.8"
   },
   "dependencies": {
