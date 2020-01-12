@@ -6,12 +6,14 @@ import { HomeSlidehowComponent } from './home-slidehow/home-slidehow.component';
 import { LoginComponent } from './login/login.component';
 import { ManageComponent } from './manage/manage.component';
 import { ManageAuthGuard } from './auth-guard/manage-auth-guard';
+import { SlideShowAuthGuard } from './auth-guard/slide-show-auth-guard';
 
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeSlidehowComponent
+    component: HomeSlidehowComponent,
+    canActivate: [SlideShowAuthGuard]
   },
   {
     path: 'login',

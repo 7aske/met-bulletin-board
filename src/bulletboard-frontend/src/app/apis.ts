@@ -1,52 +1,63 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: "root"
 })
 export class ApiService {
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private router: Router) {
+    }
 
     // serverURL = "localhost:3000";
-    serverURL = "http://192.168.18.101:3000";
-    authPanelToken = "43D7498EDE4711B6DABD54A5E1F5CBD353455BDE1D871F3ED8CBD67207691CC7";
-    authUserToken = "";
+    serverURL = "http://7aske.xyz:3000/";
 
-    async requestLoginToken(username, password): Promise<boolean> {
+    async requestLoginToken(username, password) {
         let cred = {
             mbb_username: username,
             mbb_password: password
         }
-        return new Promise((resolve, reject) => {
-            this.http.post(this.serverURL + "/auth/login", cred, {
-                responseType: "json",
-                observe: 'body'
-            }).subscribe(data => {
-                console.log(data);
-                this.authUserToken = data['token'];
-                if (data["status"] === 'OK') {
-                    resolve(true);
-                }
-            }, err => {
-                if (err['status'] === 401) {
-                    reject(false);
-                }
-            });
-        })
+
+        this.http.post(this.serverURL + "auth/login", cred, {
+            responseType: "json",
+            observe: 'body'
+        }).subscribe(data => {
+            console.log(data);
+            sessionStorage.setItem("token", data['token']);
+            if (data["status"] === 'OK') {
+                this.router.navigate(['manage']);
+                return true;
+            }
+        }, err => {
+            if (err['status'] === 401) {
+                return false;
+            }
+        });
+        return false;
     }
 
-    async isLoginValid(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            this.http.post(this.serverURL + "/auth/validate", { token: this.authUserToken }, {
+    isLoginValid(): Observable<boolean> {
+        return new Observable(observer => {
+            this.http.post(this.serverURL + "auth/validate", {}, {
                 responseType: "json"
             }).subscribe(data => {
                 if (data["status"] === 'OK') {
-                    resolve(true);
+                    observer.next(true);
+                    observer.complete();
                 }
             }, err => {
-                reject(false);
+                observer.error(false);
+                observer.complete();
             });
-
         });
     }
+
+    getAllSlides() {
+        return this.http.post(this.serverURL + "slides", {}, {
+            responseType: "json"
+        });
+    }
+
+
 }
