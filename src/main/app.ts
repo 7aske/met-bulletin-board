@@ -4,6 +4,7 @@ import { normalize } from "path";
 import { isDev } from "../server/utils/dev";
 import { generateKey } from "../server/utils/authentication";
 import { getMIMEType } from "../server/utils/mime";
+import { existsSync, readFileSync } from "fs";
 
 export const CLIENT_ROOT = "dist/bulletboard-frontend";
 export const INDEX = "index.html";
@@ -53,7 +54,7 @@ const main = async () => {
  * Define app:// protocol and how it parses urls for serving content to the Electron client.
  */
 const registerAppProtocol = () => {
-	protocol.registerFileProtocol("app", (req, callback) => {
+	protocol.registerBufferProtocol("app", (req, callback) => {
 		let url = req.url.substr(4);
 
 		url = url.replace(/[/]$/, "");
@@ -64,10 +65,11 @@ const registerAppProtocol = () => {
 		url = CLIENT_ROOT + url;
 
 		const path = normalize(`${process.cwd()}/${url}`);
-		// Set the MIME type of the request to prevent Electron 6 MIME errors
-		let headers = req.headers;
-		headers["Content-Type"] = getMIMEType(path);
-		callback({path, headers});
+		if (existsSync(path)) {
+			const data = readFileSync(path);
+			const mimeType = getMIMEType(path);
+			callback({data, mimeType});
+		}
 	}, (error) => {
 		if (error) console.error("Failed to register protocol");
 	});
