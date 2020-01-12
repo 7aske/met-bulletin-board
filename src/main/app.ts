@@ -1,4 +1,4 @@
-import { app, BrowserWindow, protocol, BrowserWindowConstructorOptions } from "electron";
+import { app, BrowserWindow, protocol, BrowserWindowConstructorOptions, screen, globalShortcut } from "electron";
 import { ChildProcess, spawn } from "child_process";
 import { normalize } from "path";
 import { isDev } from "../server/utils/dev";
@@ -32,18 +32,24 @@ const main = async () => {
 	let windowOpts: BrowserWindowConstructorOptions = {
 		width: 1440,
 		height: 900,
-		title: "Metropolitan Bulletin Board",
+		title: "Bulletin Board",
 	};
 	if (!isDev()) {
-		windowOpts["fullscreen"] = true;
+		const {width, height} = screen.getPrimaryDisplay().workAreaSize;
+		windowOpts["width"] = width;
+		windowOpts["height"] = height;
+		windowOpts["movable"] = false;
+		windowOpts["minimizable"] = false;
 		windowOpts["resizable"] = false;
 		windowOpts["closable"] = false;
+		windowOpts["frame"] = false;
+		windowOpts["fullscreen"] = true;
 		windowOpts["autoHideMenuBar"] = true;
 		windowOpts["kiosk"] = true;
+		globalShortcut.register("Alt+Tab", () => console.log("Alt+Tab"));
 	}
 
 	window = new BrowserWindow(windowOpts);
-	!isDev() && window.setMenu(null);
 	await window.loadURL("app://" + INDEX);
 	window.on("ready-to-show", window.show);
 	isDev() && window.webContents.openDevTools();
@@ -80,8 +86,9 @@ const registerAppProtocol = () => {
  */
 const close = () => {
 	if (server != null) {
+		server.kill("SIGKILL");
+		server = null;
 	}
-	server.kill("SIGKILL");
 	app.exit(0);
 	process.exit(0);
 };
@@ -100,6 +107,10 @@ const startServer = (key: string) => {
 		},
 	});
 };
-
+app.on("browser-window-created", function (e: Event, window: BrowserWindow) {
+	if (!isDev()) {
+		window.setMenu(null);
+	}
+});
 app.on("ready", main);
 app.on("window-all-closed", close);
