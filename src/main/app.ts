@@ -1,134 +1,98 @@
-import { app, BrowserWindow, ipcMain, session } from "electron";
-import crypto from "crypto";
+import { app, BrowserWindow, protocol, BrowserWindowConstructorOptions } from "electron";
 import { ChildProcess, spawn } from "child_process";
-import { basename, extname, resolve } from "path";
-import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
+import { normalize } from "path";
+import { isDev } from "../server/utils/dev";
+import { generateKey } from "../server/utils/authentication";
 
-// export const INDEX = resolve(process.cwd(), "dist/renderer/views/index.html");
-export const INDEX = resolve(process.cwd(), "dist/bulletboard-frontend/index.html");
-export const TEMPLATES_DIR = resolve(process.cwd(), "templates");
+export const CLIENT_ROOT = "dist/bulletboard-frontend";
+export const INDEX = "index.html";
 
-// export const TEMPLATE_TIMEOUT: number = (process.env.TEMPLATE_TIMEOUT ? parseInt(process.env.TEMPLATE_TIMEOUT) : 60) * 1000;
-// export const WATCHER_TIMEOUT: number = (process.env.WATCHER_TIMEOUT ? parseInt(process.env.WATCHER_TIMEOUT) : 10) * 1000;
-// export const KEY_TIMEOUT: number = (process.env.KEY_TIMEOUT ? parseInt(process.env.KEY_TIMEOUT) : 3600) * 1000;
-
-let temp_index = 0;
 let server: ChildProcess = null;
 let window: BrowserWindow = null;
 
-export let templates: string[] = [];
+/**
+ * Register app:// protocol for serving files to Electron app.
+ */
+protocol.registerSchemesAsPrivileged([{
+	scheme: "app",
+	privileges: {
+		standard: true,
+		secure: true,
+		allowServiceWorkers: true,
+		supportFetchAPI: true,
+	},
+}]);
 
 const main = async () => {
 	const key = generateKey();
-	initDirs();
-	templates = readTemplates();
+	registerAppProtocol();
 	server = startServer(key);
-	window = new BrowserWindow({
+	let windowOpts: BrowserWindowConstructorOptions = {
 		width: 1440,
 		height: 900,
 		title: "Metropolitan Bulletin Board",
-	});
+	};
+	if (!isDev()) {
+		windowOpts["fullscreen"] = true;
+		windowOpts["resizable"] = false;
+		windowOpts["closable"] = false;
+		windowOpts["autoHideMenuBar"] = true;
+		windowOpts["kiosk"] = true;
+	}
 
-	window.loadFile(INDEX);
+	window = new BrowserWindow(windowOpts);
+	!isDev() && window.setMenu(null);
+	await window.loadURL("app://" + INDEX);
 	window.on("ready-to-show", window.show);
-	window.webContents.on("dom-ready", () => window.webContents.send("key-set", key));
-	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-		//@ts-ignore
-		callback({
-			responseHeaders: {
-				...details.responseHeaders,
-				'Content-Security-Policy': ['default-src \'none\'']
-			}
-		})
-	})
+	isDev() && window.webContents.openDevTools();
+	await window.webContents.executeJavaScript(`localStorage.setItem('Key', '${key}');`);
 };
 
+/**
+ * Define app:// protocol and how it parses urls for serving content to the Electron client.
+ */
+const registerAppProtocol = () => {
+	protocol.registerFileProtocol("app", (request, callback) => {
+		let url = request.url.substr(4);
+		url = url.replace(/[/]$/, "");
+		url = url.replace(/^[/]/, "");
+		if (url !== "/" + INDEX) {
+			url = url.replace(INDEX + "/", "");
+		}
+		url = CLIENT_ROOT + url;
+
+		const path = normalize(`${process.cwd()}/${url}`);
+		callback({path});
+	}, (error) => {
+		if (error) console.error("Failed to register protocol");
+	});
+};
+
+/**
+ * Kill server on exit.
+ */
 const close = () => {
-	if (server != null)
-		server.kill("SIGKILL");
+	if (server != null) {
+	}
+	server.kill("SIGKILL");
 	app.exit(0);
 	process.exit(0);
 };
 
-const generateKey = (): string => {
-	const hash = crypto.createHash("sha256");
-	const randnum = Math.random();
-	hash.update(randnum.toString());
-	return hash.digest().toString("hex");
-};
-
+/**
+ * Start API server with the authentication key required for Electron view.
+ * @param key
+ */
 const startServer = (key: string) => {
-	return spawn("node", ["dist/server/server.js"], { stdio: "inherit", env: { "KEY": key } });
+	return spawn("node", ["dist/server/server.js"], {
+		stdio: "inherit",
+		env: {
+			"KEY": key,
+			// Inherit Electron env.
+			"NODE_ENV": process.env.NODE_ENV,
+		},
+	});
 };
-
-const initDirs = () => {
-	if (!existsSync(TEMPLATES_DIR)) {
-		mkdirSync(TEMPLATES_DIR, { recursive: true });
-	}
-
-	if (!existsSync(TEMPLATES_DIR)) {
-		mkdirSync(TEMPLATES_DIR, { recursive: true });
-	}
-};
-
-const readTemplates = () => {
-	return readdirSync(TEMPLATES_DIR)
-		.filter(dir => dir.endsWith(".html"))
-		.map(dir => resolve(TEMPLATES_DIR, dir));
-};
-
-const changeSlide = () => {
-	const tmp_len = templates.length;
-	if (tmp_len > 0) {
-		if (temp_index < tmp_len) {
-			const currTemplate = templates[temp_index];
-			const template = resolve(TEMPLATES_DIR, currTemplate);
-			if (existsSync(template)) {
-				const filename = basename(template);
-				const td: any = {
-					template: readFileSync(template),
-					index: temp_index,
-					total: tmp_len,
-					id: basename(filename, extname(filename)),
-				};
-				window.webContents.send("template-set", td);
-				temp_index = ++temp_index == tmp_len ? 0 : temp_index;
-			}
-		} else {
-			temp_index = 0;
-			const currTemplate = templates[temp_index];
-			const template = resolve(TEMPLATES_DIR, currTemplate);
-			if (existsSync(template)) {
-				const td: any = {
-					template: readFileSync(template),
-					index: temp_index,
-					total: tmp_len,
-					id: "",
-				};
-				window.webContents.send("template-set", td);
-				temp_index = ++temp_index == tmp_len ? 0 : temp_index;
-			}
-		}
-	} else {
-		window.webContents.send("template-reset");
-	}
-};
-ipcMain.on("template-get", (event: any, data: any) => {
-	if (data < templates.length) {
-		const template = templates[data];
-		if (existsSync(template)) {
-			const filename = basename(template);
-			const td: any = {
-				template: readFileSync(templates[data]),
-				index: data,
-				total: templates.length,
-				id: basename(filename, extname(filename)),
-			};
-			temp_index = ++data == templates.length ? 0 : data;
-			event.sender.send("template-set", td);
-		}
-	}
-});
 
 app.on("ready", main);
 app.on("window-all-closed", close);

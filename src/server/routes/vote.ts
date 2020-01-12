@@ -22,7 +22,7 @@ vote.get("/", async (req, res) => {
 	if (questionID) {
 		const query: any = {questionID};
 		questionOption && (query["questionOption"] = questionOption);
-		console.log(query === true);
+
 		let votes: any = await VoteModel.find(query);
 		if (count) {
 			votes = votes.length;

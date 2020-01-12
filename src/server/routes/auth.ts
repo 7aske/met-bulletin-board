@@ -1,11 +1,8 @@
 import { Request, Response, Router } from "express";
 import { constants as STATUS } from "http2";
-import { resolve } from "path";
 import { checkLogin, generateToken, verifyToken } from "../utils/authentication";
 
-const CLIENT_ROOT: string = resolve(process.cwd(), "dist/server/client");
-
-const authentication = Router();
+const auth = Router();
 
 /**
  * Generate JWT token if login credentials are valid. Expects JSON body as follows:
@@ -20,15 +17,15 @@ const authentication = Router();
  * }
  * Also sets the 'Set-Cookie' header with 'Token=generated_jtw_token'.
  */
-authentication.post("/login", (req, res) => {
+auth.post("/login", (req, res) => {
 	const username = req.body["mbb_username"];
-	const passwd = req.body["mbb_password"];
+	const password = req.body["mbb_password"];
 
-	if (username == undefined || passwd == undefined) {
+	if (username == undefined || password == undefined) {
 		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).json({status: "UNAUTHORIZED"});
 		return;
 	}
-	if (checkLogin(username, passwd)) {
+	if (checkLogin(username, password)) {
 		const token = generateToken(username);
 		res.setHeader("Set-Cookie", "Token=" + token + "; Path=/;");
 		res.status(STATUS.HTTP_STATUS_OK).json({status: "OK", message: "Logged in", token: token});
@@ -49,7 +46,7 @@ authentication.post("/login", (req, res) => {
  * }
  * or as 'Authorization' header.
  */
-authentication.post("/validate", (req: Request, res: Response) => {
+auth.post("/validate", (req: Request, res: Response) => {
 	const token = req.body["token"] || req.headers["authorization"];
 
 	if (verifyToken(token)) {
@@ -62,4 +59,4 @@ authentication.post("/validate", (req: Request, res: Response) => {
 	}
 });
 
-export default authentication;
+export default auth;

@@ -5,7 +5,9 @@
   "main": "dist/main/app.js",
   "scripts": {
     "start": "./node_modules/.bin/electron ./dist/main/app.js",
-    "start-server": "echo '' > server.log && nodemon -w ./dist ./dist/server/server.js | tee server.log"
+    "start-dev": "NODE_ENV=dev ./node_modules/.bin/electron ./dist/main/app.js",
+    "start-server": "nodemon -w ./dist ./dist/server/server.js | tee server.log",
+    "start-server-dev": "NODE_ENV=dev nodemon -w ./dist ./dist/server/server.js | tee server.log"
   },
   "repository": {
     "type": "git",
@@ -31,7 +33,7 @@
     "@types/shortid": "0.0.29",
     "@types/cors": "^2.8.6",
     "@types/morgan": "^1.7.37",
-    "electron": "^3.1.9"
+    "electron": "^7.1.8"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
