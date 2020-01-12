@@ -1,9 +1,9 @@
-import mongoose, { Model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 import shortid from "shortid";
 import { PollSchema } from "./PollSchema";
 import { ISlide } from "../../@types/Slide";
 
-const SlideSchema = new mongoose.Schema(
+const SlideSchema = new Schema(
 	{
 		slideID: {type: String, default: shortid.generate, unique: true},
 		slideTitle: {type: String, required: true},
@@ -14,6 +14,6 @@ const SlideSchema = new mongoose.Schema(
 	},
 	{collection: "slides"},
 );
-const SlideModel: Model<ISlide> = mongoose.model<ISlide>("Slide", SlideSchema);
+const SlideModel: Model<ISlide> = model<ISlide>("Slide", SlideSchema);
 
 export default SlideModel;

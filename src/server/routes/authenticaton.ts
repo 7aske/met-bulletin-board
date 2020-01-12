@@ -1,71 +1,64 @@
 import { Request, Response, Router } from "express";
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
 import { constants as STATUS } from "http2";
 import { resolve } from "path";
+import { checkLogin, generateToken, verifyToken } from "../utils/authentication";
 
 const CLIENT_ROOT: string = resolve(process.cwd(), "dist/server/client");
 
 const authentication = Router();
 
-const hashPass = (pass: string) => {
-	const hash = crypto.createHash("sha256");
-	hash.update(pass);
-	return hash.digest("hex");
-};
-
-const checkLogin = (username: string, passwd: string): boolean => {
-	return username.toLowerCase() == process.env.MBBUSER.toLowerCase() && hashPass(process.env.MBBPASS) == hashPass(passwd);
-};
-
+/**
+ * Generate JWT token if login credentials are valid. Expects JSON body as follows:
+ * {
+ *     "mbb_username": "username",
+ *     "mbb_password": "password"
+ * }
+ *
+ * Returns on valid login:
+ * {
+ * 		"token": "generated_jtw_token"
+ * }
+ * Also sets the 'Set-Cookie' header with 'Token=generated_jtw_token'.
+ */
 authentication.post("/login", (req, res) => {
 	const username = req.body["mbb_username"];
 	const passwd = req.body["mbb_password"];
-	const secret = process.env.SECRET;
-	const verifyopts: any = {algorithm: "RS512"};
-	console.log("login", req.body);
+
 	if (username == undefined || passwd == undefined) {
-		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({status: "UNAUTHORIZED"}));
+		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).json({status: "UNAUTHORIZED"});
 		return;
 	}
 	if (checkLogin(username, passwd)) {
-		const token = jwt.sign({
-			username: username,
-			timestamp: new Date().valueOf(),
-		}, secret, {expiresIn: "1h"}, verifyopts);
+		const token = generateToken(username);
 		res.setHeader("Set-Cookie", "Token=" + token + "; Path=/;");
 		res.status(STATUS.HTTP_STATUS_OK).json({status: "OK", message: "Logged in", token: token});
 	} else {
-		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({
+		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).json({
 			status: "UNAUTHORIZED",
 			message: "Invalid credentials",
 			token: null,
-		}));
+		});
 	}
 });
 
+/**
+ * Validates supplied JWT token.
+ * Token is either in the body as
+ * {
+ * 		"token": "jwt_token"
+ * }
+ * or as 'Authorization' header.
+ */
 authentication.post("/validate", (req: Request, res: Response) => {
-	const token = req.body["token"];
-	console.log("validate", req.body);
+	const token = req.body["token"] || req.headers["authorization"];
 
-	const secret = process.env.SECRET;
-	const verifyopts: any = {algorithm: "RS512"};
-
-	try {
-		const verified = jwt.verify(token, secret, verifyopts);
-		if (verified) {
-			res.status(STATUS.HTTP_STATUS_OK).json({status: "OK", message: "Valid token"});
-		} else {
-			res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({
-				status: "UNAUTHORIZED",
-				message: "Invalid token",
-			}));
-		}
-	} catch (e) {
-		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).send(JSON.stringify({
+	if (verifyToken(token)) {
+		res.status(STATUS.HTTP_STATUS_OK).json({status: "OK", message: "Valid token"});
+	} else {
+		res.status(STATUS.HTTP_STATUS_UNAUTHORIZED).json({
 			status: "UNAUTHORIZED",
 			message: "Invalid token",
-		}));
+		});
 	}
 });
 

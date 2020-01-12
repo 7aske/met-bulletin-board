@@ -7,7 +7,9 @@ const poll = Router();
 
 /**
  * Fetches all polls if no body supplied. Otherwise finds a poll by 'questionID' if JSON body supplied as follows:
- *  {questionID: "question_id"}
+ * {
+ * 		questionID: "question_id"
+ * }
  */
 poll.get("/", async (req, res) => {
 	const questionID = req.body["questionID"];
@@ -21,6 +23,13 @@ poll.get("/", async (req, res) => {
 
 /**
  * Updates the slide by questionID property. 'questionID' property is required.
+ * {
+ *     "questionID": "question_id",
+ *
+ *     "prop1": "val1",
+ *     "prop2": "val2",
+ *     ...
+ * }
  */
 poll.put("/", async (req, res) => {
 	let poll: IPoll = req.body;
@@ -36,6 +45,9 @@ poll.put("/", async (req, res) => {
 
 /**
  * Deletes the poll by given ID from request body.
+ * {
+ *     "questionID": "question_id"
+ * }
  */
 poll.delete("/", async (req, res) => {
 	const questionID = req.body["questionID"];

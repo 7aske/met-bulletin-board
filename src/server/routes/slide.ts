@@ -8,7 +8,9 @@ const slide = Router();
 
 /**
  * Fetches all slides if no body supplied. Otherwise finds a slide by 'slideID' if JSON body supplied as follows:
- *  {slideID: "slide_id"}
+ * {
+ * 	 	slideID: "slide_id"
+ * }
  */
 slide.get("/", async (req, res) => {
 	const slideID = req.body["slideID"];
@@ -23,6 +25,9 @@ slide.get("/", async (req, res) => {
 
 /**
  * Deletes the slide by given ID from request body.
+ * {
+ *     "slideID": "slide_id"
+ * }
  */
 slide.delete("/", async (req, res) => {
 	const slideID: string = req.body["slideID"];
@@ -37,12 +42,19 @@ slide.delete("/", async (req, res) => {
 
 /**
  * Updates the slide by slideID property. 'slideID' property is required.
+ * {
+ *     "slideID": "slide_id",
+ *
+ *     "prop1": "val1",
+ *     "prop2": "val2",
+ *     ...
+ * }
  */
 slide.put("/", async (req, res) => {
 	let slide: ISlide = req.body;
 	try {
 		slide = await SlideModel.findOneAndUpdate({slideID: slide.slideID}, {...slide}, {new: true});
-		res.status(STATUS.HTTP_STATUS_OK).json(slide);
+		res.status(STATUS.HTTP_STATUS_CREATED).json(slide);
 	} catch (e) {
 		console.error(e);
 		res.status(STATUS.HTTP_STATUS_BAD_REQUEST).json(e);

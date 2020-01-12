@@ -5,6 +5,7 @@ import poll from "./routes/poll";
 import authentication from "./routes/authenticaton";
 import nodemodules from "./routes/nodemodules";
 import { join } from "path";
+import { authorizeRequest } from "./utils/authentication";
 
 const router = Router();
 
