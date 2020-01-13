@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ApiService } from 'src/app/apis';
 
 @Component({
   selector: 'app-manage-poll-dialog',
@@ -9,10 +10,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 export class ManagePollDialogComponent implements OnInit {
   poll: any = { questionID: undefined, questionText: "", questionOptions: [] };
 
-  constructor(public dialogRef: MatDialogRef<ManagePollDialogComponent>, @Inject(MAT_DIALOG_DATA) data) {
+  constructor(public dialogRef: MatDialogRef<ManagePollDialogComponent>, @Inject(MAT_DIALOG_DATA) data, private api: ApiService) {
 
-    if (data !== "")
-      this.poll = data;
+    // if (data !== "")
+    // this.poll = data;
 
   }
 
@@ -33,10 +34,11 @@ export class ManagePollDialogComponent implements OnInit {
   }
 
   save(questionText) {
-    // send 'poll' to api
-
     this.poll.questionText = questionText;
     console.log("poll", this.poll);
+    this.api.savePoll(this.poll).subscribe(() => {
+      this.close();
+    })
   }
 
 }

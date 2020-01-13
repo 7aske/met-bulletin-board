@@ -2,41 +2,42 @@
     <h1 *ngIf="slide !== ''" mat-dialog-title>{{slide?.slideTitle}}</h1>
     <h1 *ngIf="slide === null" mat-dialog-title>New slide</h1>
     <div mat-dialog-content>
-        <form [formGroup]="slideForm">
+        <div>
             <div>
                 <mat-form-field>
-                    <input matInput placeholder="Slide title" value="" formControlName="slideTitle">
+                    <input matInput placeholder="Slide title" value="" #slideTitle>
                 </mat-form-field>
             </div>
             <div>
                 <mat-form-field>
-                    <input matInput placeholder="Body title" value="" formControlName="slideBodyTitle">
+                    <input matInput placeholder="Body title" value="" #slideBodyTitle>
                 </mat-form-field>
             </div>
             <div>
                 <mat-form-field>
-                    <input matInput placeholder="Body text" value="" formControlName="slideBodyText">
+                    <input matInput placeholder="Body text" value="" #slideBodyText>
                 </mat-form-field>
             </div>
             <div>
                 <mat-form-field>
-                    <input matInput placeholder="Image url" value="" formControlName="slideImageUrl">
+                    <input matInput placeholder="Image url or HEX color code" value="" #slideImageUrl>
                 </mat-form-field>
             </div>
             <div>
                 <mat-form-field>
                     <mat-label>Poll</mat-label>
-                    <mat-select formControlName="questionID">
-                        <mat-option *ngFor="let poll of polls" [value]="poll.questionID">
+                    <mat-select #questionID>
+                        <mat-option *ngFor="let poll of polls" [value]="poll?.questionID">
                             {{poll.questionText}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
-        </form>
+        </div>
     </div>
     <div mat-dialog-actions>
-        <button mat-raised-button class="actionBtn" color='primary' (click)='save()'>Save</button>
+        <button mat-raised-button class="actionBtn" color='primary'
+            (click)='save(slideTitle, slideBodyTitle,slideBodyText,slideImageUrl,questionID)'>Save</button>
         <button mat-raised-button class="actionBtn" color='warn' (click)="close()">Close</button>
     </div>
 </div>

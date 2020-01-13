@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatInput } from '@angular/material';
 import { FormGroup, FormControl } from '@angular/forms';
+import { ApiService } from 'src/app/apis';
 
 @Component({
   selector: 'app-manage-dialog',
@@ -10,39 +11,47 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class ManageDialogComponent implements OnInit {
 
   slide;
-  slideForm: FormGroup;
-
-  polls: any = [
-    { questionID: 1, questionText: "Koliko puta pijes kafu nedeljno?", questionOptions: [1, 2, 3, 4, 5] },
-    { questionID: 2, questionText: "Koliko puta pijes kafu mesecno?", questionOptions: [1, 2, 3, 4, 5] },
-    { questionID: 3, questionText: "Koliko puta pijes kafu godisnje?", questionOptions: [1, 2, 3, 4, 5] },
-    { questionID: 4, questionText: "Koliko puta pijes kafu na sat?", questionOptions: [1, 2, 3, 4, 5] }
-  ]
+  polls: any = [];
 
   constructor(
-    public dialogRef: MatDialogRef<ManageDialogComponent>, @Inject(MAT_DIALOG_DATA) data) {
+    public dialogRef: MatDialogRef<ManageDialogComponent>, @Inject(MAT_DIALOG_DATA) data, private api: ApiService) {
 
-    if (data !== "")
-      this.slide = data;
+    // if (data !== "")
+    //   this.slide = data;
 
-    this.slideForm = new FormGroup({
-      slideTitle: new FormControl(''),
-      slideBodyTitle: new FormControl(''),
-      slideBodyText: new FormControl(''),
-      slideImageUrl: new FormControl(''),
-      questionID: new FormControl('')
-    });
   }
 
   ngOnInit() {
+    this.getAllPoll();
+  }
 
+  getAllPoll() {
+    this.api.getAllPolls().subscribe(data => {
+      this.polls = data['polls'];
+    });
   }
 
   close() {
     this.dialogRef.close();
   }
 
-  save() {
-    console.log(this.slideForm.value);
+  save(slideTitle, slideBodyTitle, slideBodyText, slideImageUrl, questionID) {
+    // slideTitle.value = "";
+    // slideBodyTitle.value = "";
+    // slideBodyText.value = "";
+    // slideImageUrl.value = "";
+    // questionID.value = -1;
+    console.log(slideTitle.value, slideBodyTitle.value, slideBodyText.value, slideImageUrl.value, questionID.value);
+    this.api.saveSlide({
+      slideTitle: slideTitle.value,
+      slideBodyTitle: slideBodyTitle.value,
+      slideBodyText: slideBodyText.value,
+      slideImageUrl: slideImageUrl.value,
+      questionID: questionID.value
+    }).subscribe(() => {
+      this.close();
+    });
+
+
   }
 }

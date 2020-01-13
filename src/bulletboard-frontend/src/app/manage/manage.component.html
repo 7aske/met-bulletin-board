@@ -1,7 +1,8 @@
 <div class="manageWrapper">
 
     <div id="menu">
-        <p style="font-weight: bold;margin-right: 1em;">ADMIN</p><button mat-raised-button color="warn">Logout</button>
+        <p style="font-weight: bold;margin-right: 1em;">ADMIN</p><button mat-raised-button color="warn"
+            (click)="logout()">Logout</button>
     </div>
 
     <mat-tab-group>
@@ -16,7 +17,7 @@
                         <mat-card-subtitle *ngIf="slide.slideBodyTitle != null">{{slide.slideBodyTitle}}
                         </mat-card-subtitle>
                     </mat-card-header>
-                    <img mat-card-image [src]="slide.slideImageUrl" alt="Slide background image">
+                    <img mat-card-image [src]="slide.slideImageUrl" alt="">
                     <mat-card-content>
                         <p *ngIf="slide.slideBodyText != null">
                             {{getTrimmedText(slide.slideBodyText)}}
@@ -25,7 +26,7 @@
                     <mat-card-actions>
                         <button mat-raised-button color="primary" (click)="openDialogSlide(slide)">Edit</button>
                         <button mat-raised-button color="warn" style="float: right;"
-                            (click)="deleteSlide(slide.slideID)">Delete</button>
+                            (click)="deleteSlide(slide)">Delete</button>
                     </mat-card-actions>
                 </mat-card>
             </div>
@@ -35,14 +36,14 @@
             <button mat-raised-button color="primary" class="createSlide" (click)="openDialogPoll(null)">Create
                 poll</button>
             <mat-list class="polls">
-                <div *ngFor="let slide of slides;">
-                    <mat-list-item *ngIf="slide.poll != null">
+                <div *ngFor="let poll of polls;">
+                    <mat-list-item *ngIf="poll != null">
                         <mat-icon mat-list-icon>done_outline</mat-icon>
-                        <h4 mat-line>{{slide.poll?.questionText}}
-                            <span><button mat-raised-button color="primary" (click)="openDialogPoll(slide?.poll)"
+                        <h4 mat-line>{{poll?.questionText}}
+                            <span><button mat-raised-button color="primary" (click)="openDialogPoll(poll)"
                                     style="margin-right: 1em;margin-left: 2em;">Edit</button>
-                                <button mat-raised-button color="warn"
-                                    (click)='deletePoll(slide.poll?.questionID)'>Delete</button></span></h4>
+                                <button mat-raised-button color="warn" (click)='deletePoll(poll)'>Delete</button></span>
+                        </h4>
                     </mat-list-item>
                     <mat-divider></mat-divider>
                 </div>

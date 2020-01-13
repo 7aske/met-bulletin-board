@@ -22,7 +22,7 @@ export class APIInterceptor implements HttpInterceptor {
         const token = sessionStorage.getItem("token");
 
         request = request.clone({
-            headers: request.headers.set('Authorization', token ? token : "aa")
+            headers: request.headers.set('Authorization', token ? token : "")
         });
         return next.handle(request);
     }
