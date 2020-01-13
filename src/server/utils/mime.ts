@@ -1,5 +1,8 @@
 import path from "path";
 
+/**
+ * Common MIME types based on extension
+ */
 const mimeTypes: { [key: string]: string } = {
 	".html": "text/html",
 	".js": "text/javascript",
@@ -17,6 +20,10 @@ const mimeTypes: { [key: string]: string } = {
 	".svg": "application/image/svg+xml",
 };
 
+/**
+ * Parses MIME type based on file path extension. Defaults to 'text/plain'.
+ * @param fpath - File path to be parsed
+ */
 export const getMIMEType = (fpath: string): string => {
 	let extname = String(path.extname(fpath)).toLowerCase();
 	return mimeTypes[extname] || "text/plain";

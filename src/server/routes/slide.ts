@@ -2,6 +2,7 @@ import { Router } from "express";
 import { constants as STATUS } from "http2";
 import SlideModel from "../schema/SlideSchema";
 import { ISlide } from "../../@types/Slide";
+import { authorizeRequest } from "../middleware/authentication";
 
 const slide = Router();
 
@@ -29,14 +30,22 @@ slide.get("/", async (req, res) => {
  *     "slideID": "slide_id"
  * }
  */
-slide.delete("/", async (req, res) => {
-	const slideID: string = req.body["slideID"];
-	try {
-		await SlideModel.findOneAndDelete({slideID}).exec();
-		res.status(STATUS.HTTP_STATUS_OK).json({message: "Ok"});
-	} catch (e) {
-		console.error(e);
-		res.status(STATUS.HTTP_STATUS_BAD_REQUEST).json(e);
+slide.delete("/", authorizeRequest, async (req, res) => {
+	const slideID: string = req.body["slideID"] || req.query["slideID"];
+	if (slideID === undefined) {
+		res.status(STATUS.HTTP_STATUS_NOT_FOUND).json({slideID, message: "Not Found"});
+	} else {
+		try {
+			const r = await SlideModel.findOneAndDelete({slideID}).exec();
+			if (r !== null) {
+				res.status(STATUS.HTTP_STATUS_OK).json({slideID, message: "Ok"});
+			} else {
+				res.status(STATUS.HTTP_STATUS_NOT_FOUND).json({slideID, message: "Not Found"});
+			}
+		} catch (e) {
+			console.error(e);
+			res.status(STATUS.HTTP_STATUS_BAD_REQUEST).json(e);
+		}
 	}
 });
 
@@ -50,7 +59,7 @@ slide.delete("/", async (req, res) => {
  *     ...
  * }
  */
-slide.put("/", async (req, res) => {
+slide.put("/", authorizeRequest, async (req, res) => {
 	let slide: ISlide = req.body;
 	try {
 		slide = await SlideModel.findOneAndUpdate({slideID: slide.slideID}, {...slide}, {new: true});
@@ -72,7 +81,7 @@ slide.put("/", async (req, res) => {
  *		poll: {type: PollSchema, required: false},
  *  }
  */
-slide.post("/", async (req, res) => {
+slide.post("/", authorizeRequest, async (req, res) => {
 	let slide: ISlide = req.body;
 	const slideDoc = new SlideModel(slide);
 	try {

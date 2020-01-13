@@ -50,13 +50,21 @@ poll.put("/", async (req, res) => {
  * }
  */
 poll.delete("/", async (req, res) => {
-	const questionID = req.body["questionID"];
-	try {
-		const r = await PollModel.findOneAndDelete({questionID});
-		res.status(STATUS.HTTP_STATUS_OK).json(r);
-	} catch (e) {
-		console.error(e);
-		res.status(STATUS.HTTP_STATUS_BAD_REQUEST).json(e);
+	const questionID = req.body["questionID"] || req.query["questionID"];
+	if (questionID === undefined) {
+		res.status(STATUS.HTTP_STATUS_NOT_FOUND).json({questionID, message: "Not Found"});
+	} else {
+		try {
+			const r = await PollModel.findOneAndDelete({questionID});
+			if (r !== null) {
+				res.status(STATUS.HTTP_STATUS_OK).json({questionID, message: "Ok"});
+			} else {
+				res.status(STATUS.HTTP_STATUS_NOT_FOUND).json({questionID, message: "Not Found"});
+			}
+		} catch (e) {
+			console.error(e);
+			res.status(STATUS.HTTP_STATUS_BAD_REQUEST).json(e);
+		}
 	}
 });
 

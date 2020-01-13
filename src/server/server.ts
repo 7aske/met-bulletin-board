@@ -7,7 +7,6 @@ import cors from "cors";
 import morgan from "morgan";
 import { log } from "./middleware/log";
 import mongoose from "mongoose";
-import { isDev } from "./utils/dev";
 
 
 if (dotenv.config({path: "config/config.cfg"}).error)

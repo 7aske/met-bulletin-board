@@ -3,6 +3,7 @@ import { constants as STATUS } from "http2";
 import VoteModel from "../schema/VoteSchema";
 import { IVote } from "../../@types/Vote";
 import PollModel from "../schema/PollSchema";
+import { authorizeLocalhost, authorizeRequest } from "../middleware/authentication";
 
 const vote = Router();
 
@@ -15,7 +16,7 @@ const vote = Router();
  * }
  * If 'count' is supplied and set is set to true returns only the count of votes.
  */
-vote.get("/", async (req, res) => {
+vote.get("/", authorizeRequest, async (req, res) => {
 	const questionID = req.body["questionID"];
 	const questionOption = req.body["questionOption"];
 	const count = req.body["count"];
@@ -48,7 +49,7 @@ vote.get("/", async (req, res) => {
  *
  * Returns status code 201 on successful vote.
  */
-vote.post("/", async (req, res) => {
+vote.post("/", authorizeLocalhost, async (req, res) => {
 	let vote: IVote = req.body;
 	vote = new VoteModel(vote);
 
