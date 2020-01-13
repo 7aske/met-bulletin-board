@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { ApiService } from '../apis';
 
 @Component({
   selector: 'app-home-slidehow',
@@ -13,18 +14,19 @@ export class HomeSlidehowComponent implements OnInit {
   inactiveSeconds = 30;
   timeOnSlideSeconds = 10;
 
-  slides: any = [
-    { slideID: 0, slideTitle: "Mnogo dobar title! #1", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: undefined },
-    { slideID: 1, slideTitle: "Mnogo dobar title! #2", slideBodyTitle: undefined, slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 1, questionText: "Koliko puta pijes kafu nedeljno?", questionOptions: [1, 2, 3, 4, 5] } },
-    { slideID: 2, slideTitle: "Mnogo dobar title! #3", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "#E675D8", poll: { questionID: 2, questionText: "Koliko puta pijes kafu mesecno?", questionOptions: [1, 2, 3, 4, 5] } },
-    { slideID: 3, slideTitle: "Mnogo dobar title! #4", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 3, questionText: "Koliko puta pijes kafu godisnje?", questionOptions: [1, 2, 3, 4, 5] } },
-    { slideID: 4, slideTitle: "Mnogo dobar title! #5", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 4, questionText: "Koliko puta pijes kafu na sat?", questionOptions: [1, 2, 3, 4, 5] } }
-  ]
+  // slides: any = [
+  //   { slideID: 0, slideTitle: "Mnogo dobar title! #1", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: undefined },
+  //   { slideID: 1, slideTitle: "Mnogo dobar title! #2", slideBodyTitle: undefined, slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 1, questionText: "Koliko puta pijes kafu nedeljno?", questionOptions: [1, 2, 3, 4, 5] } },
+  //   { slideID: 2, slideTitle: "Mnogo dobar title! #3", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "#E675D8", poll: { questionID: 2, questionText: "Koliko puta pijes kafu mesecno?", questionOptions: [1, 2, 3, 4, 5] } },
+  //   { slideID: 3, slideTitle: "Mnogo dobar title! #4", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 3, questionText: "Koliko puta pijes kafu godisnje?", questionOptions: [1, 2, 3, 4, 5] } },
+  //   { slideID: 4, slideTitle: "Mnogo dobar title! #5", slideBodyTitle: "Drugo super naslov!", slideBodyText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim mattis enim, nec blandit augue tempor at. Proin eu iaculis velit. Quisque commodo mi in elit volutpat blandit non ut sem. ", slideImageUrl: "https://unsplash.it/1920/1080", poll: { questionID: 4, questionText: "Koliko puta pijes kafu na sat?", questionOptions: [1, 2, 3, 4, 5] } }
+  // ]
+  slides: any = [];
 
   userActivity;
 
   userInactive: Subject<any> = new Subject();
-  constructor() {
+  constructor(private api: ApiService) {
     this.setTimeout();
     this.userInactive.subscribe(() => {
       if (this.slideTimer == undefined)
@@ -42,7 +44,14 @@ export class HomeSlidehowComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getAllSLides();
     this.startSlides();
+  }
+
+  getAllSLides() {
+    this.api.getAllSlides().subscribe(data => {
+      this.slides = data["slides"];
+    });
   }
 
   onSubmit(forma) {
@@ -83,9 +92,8 @@ export class HomeSlidehowComponent implements OnInit {
     }
   }
 
-  sendPollRes(index, sel) {
-    console.log(index, sel);
-
+  sendPollRes(questID, index, sel) {
+    this.api.callVode(questID, index, sel);
   }
 
 }

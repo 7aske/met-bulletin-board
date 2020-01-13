@@ -40,10 +40,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { LoginComponent } from './login/login.component';
 import { ManageComponent } from './manage/manage.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ManageDialogComponent } from './manage/manage-dialog/manage-dialog.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ManagePollDialogComponent } from './manage/manage-poll-dialog/manage-poll-dialog.component';
+import { APIInterceptor } from './auth-guard/request-inceptor';
 
 @NgModule({
   declarations: [
@@ -98,7 +99,14 @@ import { ManagePollDialogComponent } from './manage/manage-poll-dialog/manage-po
     ManageDialogComponent,
     ManagePollDialogComponent
   ],
-  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: APIInterceptor,
+      multi: true,
+    },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -7,18 +7,20 @@ import { ApiService } from '../apis';
 })
 export class ManageAuthGuard implements CanActivate {
 
-    constructor(private router: Router, private api: ApiService) { }
+    valid: boolean = false;
+    constructor(private router: Router, private api: ApiService) {
 
-    async canActivate() {
-        return true;
-        console.log("called");
-        if (this.api.authUserToken != null && this.api.authUserToken !== "" && await this.api.isLoginValid()) {
-            console.log("hit");
+    }
+
+    canActivate(): any {
+        this.api.isLoginValid().subscribe(data => {
+            console.log(data);
             return true;
-        } else {
+        }, err => {
             this.router.navigate(['login']);
             return false;
-        }
+        });
+        return true;
     }
 
 
