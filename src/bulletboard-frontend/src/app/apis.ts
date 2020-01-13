@@ -12,7 +12,7 @@ export class ApiService {
     }
 
     // serverURL = "localhost:3000";
-    serverURL = "http://7aske.xyz:3000/";
+    serverURL = "http://127.0.0.1:3000/";
 
     logout() {
         sessionStorage.removeItem('token');
