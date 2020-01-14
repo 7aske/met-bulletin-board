@@ -4,7 +4,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeSlidehowComponent } from './home-slidehow/home-slidehow.component';
+import { HomeSlideshowComponent } from './home-slideshow/home-slideshow.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatCheckboxModule } from '@angular/material';
@@ -49,7 +49,7 @@ import { APIInterceptor } from './auth-guard/request-inceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeSlidehowComponent,
+    HomeSlideshowComponent,
     ErrorPageComponent,
     LoginComponent,
     ManageComponent,

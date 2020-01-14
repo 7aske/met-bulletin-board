@@ -11,15 +11,16 @@ Visitors are able to vote for a given poll through the Electron interface if suc
 ```yaml
 # config/config.cfg
 
-PORT=3000           # web interface port         (required)
-MBB_USER=admin      # web interface username     (required)
-MBB_PASS=admin      # web interface password     (required)
+PORT=3000              # web interface port         (required)
+MBB_USER=admin         # web interface username     (required)
+MBB_PASS=admin         # web interface password     (required)
 
-DB_USER=admin       # database username          (required) 
-DB_PASS=admin       # database password          (required)
-DB_URL=127.0.0.1    # ip of the database server  (required)
+DB_USER=admin          # database username          (required) 
+DB_PASS=admin          # database password          (required)
+DB_NAME=bulletin_board # database name              (required)
+DB_IP=127.0.0.1       # ip of the database server  (required)
 
-SECRET=secret       # secret used for hashing    (optional)
+SECRET=secret          # secret used for hashing    (optional)
 ```
 
 ```yaml
@@ -54,6 +55,7 @@ setParameter:
 `npm run start-server` - Starts only the API server.
 
 #### Utility
+
 `npm run clean` - Deletes respective `node_modules` folders and `dist` folder.
 
 `npm run deploy` - Deploys project and installs project dependencies to the ip specified in `./scripts/rc` file.

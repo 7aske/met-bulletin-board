@@ -11,6 +11,7 @@ export class SlideShowAuthGuard implements CanActivate {
 
     canActivate() {
         // return (window.location.href.startsWith("http://localhost") || window.location.href.startsWith("https://localhost"));
-        return (window.location.href.startsWith("app://"));
+        // return (window.location.href.startsWith("app://"));
+      return true;
     }
 }

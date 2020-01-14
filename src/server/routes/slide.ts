@@ -83,8 +83,8 @@ slide.put("/", authorizeRequest, async (req, res) => {
  */
 slide.post("/", authorizeRequest, async (req, res) => {
 	let slide: ISlide = req.body;
-	const slideDoc = new SlideModel(slide);
 	try {
+		const slideDoc = new SlideModel(slide);
 		slide = await slideDoc.save();
 		res.status(STATUS.HTTP_STATUS_CREATED).json(slide);
 	} catch (e) {

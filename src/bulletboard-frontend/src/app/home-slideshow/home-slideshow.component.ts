@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ApiService } from '../apis';
 
 @Component({
-  selector: 'app-home-slidehow',
-  templateUrl: './home-slidehow.component.html',
-  styleUrls: ['./home-slidehow.component.css']
+  selector: 'app-home-slideshow',
+  templateUrl: './home-slideshow.component.html',
+  styleUrls: ['./home-slideshow.component.css']
 })
-export class HomeSlidehowComponent implements OnInit {
+export class HomeSlideshowComponent implements OnInit {
   slideTimer;
   slideIndex = 0;
   inactiveSeconds = 30;
@@ -44,33 +43,34 @@ export class HomeSlidehowComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getAllSLides();
+    this.getAllSlides();
     this.startSlides();
   }
 
-  getAllSLides() {
+  getAllSlides() {
     this.api.getAllSlides().subscribe(data => {
       this.slides = data["slides"];
     });
   }
 
   onSubmit(forma) {
-    console.log(forma);;
+    console.log(forma);
   }
 
   getBackground(text: string) {
     if (!text.startsWith('#')) {
       return 'url(' + text + ')';
     }
-    return text
+    return text;
   }
 
   startSlides() {
     this.slideTimer = setInterval(() => {
       this.slideIndex++;
-      if (this.slideIndex >= this.slides.length)
+      if (this.slideIndex >= this.slides.length){
         this.slideIndex = 0;
-
+        this.getAllSlides();
+      }
     }, this.timeOnSlideSeconds * 1000);
   }
 
@@ -93,7 +93,7 @@ export class HomeSlidehowComponent implements OnInit {
   }
 
   sendPollRes(questID, index, sel) {
-    this.api.callVode(questID, index, sel);
+    this.api.callVote(questID, index, sel);
   }
 
 }

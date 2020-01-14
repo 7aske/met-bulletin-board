@@ -15,6 +15,7 @@ poll.get("/", async (req, res) => {
 	const questionID = req.body["questionID"];
 	if (questionID) {
 		let poll = PollModel.findOne({questionID});
+		res.status(STATUS.HTTP_STATUS_OK).json(poll);
 	} else {
 		let polls = await PollModel.find();
 		res.status(STATUS.HTTP_STATUS_OK).json({polls});

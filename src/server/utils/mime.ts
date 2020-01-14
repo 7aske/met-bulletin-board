@@ -18,6 +18,7 @@ const mimeTypes: { [key: string]: string } = {
 	".eot": "application/vnd.ms-fontobject",
 	".otf": "application/font-otf",
 	".svg": "application/image/svg+xml",
+	".ico": "icon/x-icon",
 };
 
 /**

@@ -11,8 +11,8 @@ export class ApiService {
     constructor(private http: HttpClient, private router: Router) {
     }
 
-    // serverURL = "localhost:3000";
-    serverURL = "http://192.168.200.225:3000/";
+    serverURL = "http://127.0.0.1:3000/";
+    // serverURL = "http://192.168.200.225:3000/";
 
     logout() {
         sessionStorage.removeItem('token');
@@ -98,7 +98,7 @@ export class ApiService {
         });
     }
 
-    callVode(questionID, studentIndex, questionOption) {
+    callVote(questionID, studentIndex, questionOption) {
         return this.http.post(this.serverURL + "vote", {
             questionID: questionID,
             studentIndex: studentIndex,

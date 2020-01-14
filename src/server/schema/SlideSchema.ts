@@ -10,7 +10,7 @@ const SlideSchema = new Schema(
 		slideBodyTitle: {type: String, required: true},
 		slideBodyText: {type: String, required: true},
 		slideImageUrl: {type: String, default: ""},
-		poll: {type: PollSchema, default: null},
+		poll: {type: Object, default: null, required: false},
 	},
 	{collection: "slides"},
 );

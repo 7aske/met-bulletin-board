@@ -8,9 +8,10 @@ CFG_PATH="config"
 CONFIG_CFG="PORT=3000
 DB_USER=admin
 DB_PASS=admin
+DB_NAME=bulletin_board
+DB_IP=127.0.0.1
 MBB_USER=admin
 MBB_PASS=admin
-DB_URL=127.0.0.1
 SECRET=secret"
 CONFIG_CFG_PATH="$CFG_PATH/config.cfg"
 

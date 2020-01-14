@@ -10,8 +10,8 @@ import { isDev } from "../utils/dev";
  * @param next - Express next function
  */
 export const authorizeRequest = (req: Request, res: Response, next: NextFunction) => {
-	if (isDev()){
-		next();
+	if (isDev()) {
+		return next();
 	}
 	const token = req.body["token"] || req.headers["authorization"];
 
@@ -33,8 +33,8 @@ export const authorizeRequest = (req: Request, res: Response, next: NextFunction
  * @param next - Express next function
  */
 export const authorizeLocalhost = (req: Request, res: Response, next: NextFunction) => {
-	if (isDev()){
-		next();
+	if (isDev()) {
+		return next();
 	}
 	const addr = req.connection.remoteAddress;
 	const key = req.headers["key"] || req.body["key"];

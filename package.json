@@ -5,15 +5,14 @@
   "description": "Simple bulletin board application for showing content over an Electron based interface window",
   "scripts": {
     "deploy": "./scripts/deploy.sh",
-
     "clean": "rm -rf ./node_modules && rm -rf ./src/bulletboard-frontend/node_modules && rm -rf ./dist",
     "install-all": "npm -C ./src/bulletboard-frontend install && npm install && ./scripts/def_conf.sh && echo 'Done'",
     "build": "cd ./src/bulletboard-frontend && ./node_modules/.bin/ng build --prod --outputPath=../../dist/bulletboard-frontend && cd ../../ && ./node_modules/.bin/tsc && cd dist && ln -sf ../node_modules node_modules && cd .. && cp -r ./config ./dist && ./scripts/gen_pkg_json.sh",
     "start": "cd dist && ./node_modules/.bin/electron ./app.js",
     "start-dev": "cd ./dist && NODE_ENV=dev ./node_modules/.bin/electron ./app.js",
-    "start-server": "node ./dist/server/server.js | tee server.log",
-    "start-server-dev": "NODE_ENV=dev nodemon -w ./dist ./dist/server/server.js | tee server.log",
-    "start-remote": "./scripts/run.sh",
+    "start-server": "cd dist && node ./server/server.js | tee ../server.log",
+    "start-server-dev": "cd dist && NODE_ENV=dev nodemon -w ./dist ./server/server.js | tee server.log",
+    "start-remote": "./scripts/run.sh"
   },
   "repository": {
     "type": "git",
