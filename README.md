@@ -42,6 +42,7 @@ setParameter:
 ## Usage
 
 #### Setup 
+
 `npm run install-all` - Installs all dependencies
 
 `npm run build` - Builds the project
@@ -52,4 +53,10 @@ setParameter:
 
 `npm run start-server` - Starts only the API server.
 
+#### Utility
+`npm run clean` - Deletes respective `node_modules` folders and `dist` folder.
+
+`npm run deploy` - Deploys project and installs project dependencies to the ip specified in `./scripts/rc` file.
+
+`npm run start-remote` - Runs remote project (after exiting remote app remains running)
 

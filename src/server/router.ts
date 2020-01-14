@@ -5,7 +5,7 @@ import poll from "./routes/poll";
 import auth from "./routes/auth";
 import { authorizeRequest } from "./middleware/authentication";
 
-const CLIENT_ROOT = "dist/bulletboard-frontend";
+const CLIENT_ROOT = "bulletboard-frontend";
 
 const router = Router();
 

@@ -1,42 +1,42 @@
 {
   "name": "met-bulletin-board",
   "version": "1.0.0",
+  "main": "dist/app.js",
   "description": "Simple bulletin board application for showing content over an Electron based interface window",
-  "main": "dist/main/app.js",
   "scripts": {
+    "deploy": "./scripts/deploy.sh",
+
+    "clean": "rm -rf ./node_modules && rm -rf ./src/bulletboard-frontend/node_modules && rm -rf ./dist",
     "install-all": "npm -C ./src/bulletboard-frontend install && npm install && ./scripts/def_conf.sh && echo 'Done'",
-    "build": "cd ./src/bulletboard-frontend && ./node_modules/.bin/ng build --prod --outputPath=../../dist/bulletboard-frontend && cd ../../ && ./node_modules/.bin/tsc",
-    "start": "./node_modules/.bin/electron ./dist/main/app.js",
-    "start-dev": "NODE_ENV=dev ./node_modules/.bin/electron ./dist/main/app.js",
+    "build": "cd ./src/bulletboard-frontend && ./node_modules/.bin/ng build --prod --outputPath=../../dist/bulletboard-frontend && cd ../../ && ./node_modules/.bin/tsc && cd dist && ln -sf ../node_modules node_modules && cd .. && cp -r ./config ./dist && ./scripts/gen_pkg_json.sh",
+    "start": "cd dist && ./node_modules/.bin/electron ./app.js",
+    "start-dev": "cd ./dist && NODE_ENV=dev ./node_modules/.bin/electron ./app.js",
     "start-server": "node ./dist/server/server.js | tee server.log",
-    "start-server-dev": "NODE_ENV=dev nodemon -w ./dist ./dist/server/server.js | tee server.log"
+    "start-server-dev": "NODE_ENV=dev nodemon -w ./dist ./dist/server/server.js | tee server.log",
+    "start-remote": "./scripts/run.sh",
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/7aske/met-bulletin-board.git"
   },
   "keywords": [],
-  "author": "Nikola Tasic",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/7aske/met-bulletin-board/issues"
-  },
+  "author": "Nikola Tasic, Aleksandar Stojadinovic",
   "homepage": "https://github.com/7aske/met-bulletin-board#readme",
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
     "@types/cookie-parser": "^1.4.1",
+    "@types/cors": "^2.8.6",
     "@types/dotenv": "^6.1.1",
     "@types/electron": "^1.6.10",
     "@types/express": "^4.16.1",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/lowdb": "^1.0.9",
     "@types/mongoose": "^5.5.41",
+    "@types/morgan": "^1.7.37",
     "@types/node": "^12.0.2",
     "@types/shortid": "0.0.29",
-    "@types/cors": "^2.8.6",
-    "@types/morgan": "^1.7.37",
-    "typescript": "^3.7.4",
-    "electron": "6.1.7"
+    "electron": "6.1.7",
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -47,7 +47,6 @@
     "express": "^4.16.4",
     "jquery": "^3.4.1",
     "jsonwebtoken": "^8.5.1",
-    "lowdb": "^1.0.0",
     "mongoose": "^5.8.7",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.4",

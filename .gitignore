@@ -1,9 +1,12 @@
 .idea
 .vscode
+
 node_modules
-config/**.*
+build/**
 dist/*
+config/*
 database/*
 templates/*
+
 .env
 *.log

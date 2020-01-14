@@ -1,12 +1,12 @@
 import { app, BrowserWindow, protocol, BrowserWindowConstructorOptions, screen, globalShortcut } from "electron";
 import { ChildProcess, spawn } from "child_process";
 import { normalize } from "path";
-import { isDev } from "../server/utils/dev";
-import { generateKey } from "../server/utils/authentication";
-import { getMIMEType } from "../server/utils/mime";
+import { isDev } from "./server/utils/dev";
+import { generateKey } from "./server/utils/authentication";
+import { getMIMEType } from "./server/utils/mime";
 import { existsSync, readFileSync } from "fs";
 
-export const CLIENT_ROOT = "dist/bulletboard-frontend";
+export const CLIENT_ROOT = "bulletboard-frontend";
 export const INDEX = "index.html";
 
 let server: ChildProcess = null;
@@ -98,7 +98,7 @@ const close = () => {
  * @param key
  */
 const startServer = (key: string) => {
-	return spawn("node", ["dist/server/server.js"], {
+	return spawn("node", ["server/server.js"], {
 		stdio: "inherit",
 		env: {
 			"KEY": key,
