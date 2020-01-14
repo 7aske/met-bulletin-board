@@ -1,11 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { Subject } from 'rxjs';
-import { ApiService } from '../apis';
+import { Component, OnInit, HostListener } from "@angular/core";
+import { Subject } from "rxjs";
+import { ApiService } from "../apis";
 
 @Component({
-  selector: 'app-home-slideshow',
-  templateUrl: './home-slideshow.component.html',
-  styleUrls: ['./home-slideshow.component.css']
+  selector: "app-home-slideshow",
+  templateUrl: "./home-slideshow.component.html",
+  styleUrls: ["./home-slideshow.component.css"],
 })
 export class HomeSlideshowComponent implements OnInit {
   slideTimer;
@@ -25,6 +25,7 @@ export class HomeSlideshowComponent implements OnInit {
   userActivity;
 
   userInactive: Subject<any> = new Subject();
+
   constructor(private api: ApiService) {
     this.setTimeout();
     this.userInactive.subscribe(() => {
@@ -37,7 +38,7 @@ export class HomeSlideshowComponent implements OnInit {
     this.userActivity = setTimeout(() => this.userInactive.next(undefined), this.inactiveSeconds * 1000);
   }
 
-  @HostListener('window:mousemove') refreshUserState() {
+  @HostListener("window:mousemove") refreshUserState() {
     clearTimeout(this.userActivity);
     this.setTimeout();
   }
@@ -58,8 +59,8 @@ export class HomeSlideshowComponent implements OnInit {
   }
 
   getBackground(text: string) {
-    if (!text.startsWith('#')) {
-      return 'url(' + text + ')';
+    if (!text.startsWith("#")) {
+      return "url(" + text + ")";
     }
     return text;
   }
@@ -67,7 +68,7 @@ export class HomeSlideshowComponent implements OnInit {
   startSlides() {
     this.slideTimer = setInterval(() => {
       this.slideIndex++;
-      if (this.slideIndex >= this.slides.length){
+      if (this.slideIndex >= this.slides.length) {
         this.slideIndex = 0;
         this.getAllSlides();
       }
@@ -86,14 +87,16 @@ export class HomeSlideshowComponent implements OnInit {
   }
 
   handleNumberInput(event) {
-    if (event.key === 'Backspace') return;
-    if (event.key <= '0' || event.key >= '9') {
+    if (event.key === "Backspace") return;
+    if (event.key <= "0" || event.key >= "9") {
       event.preventDefault();
     }
   }
 
   sendPollRes(questID, index, sel) {
-    this.api.callVote(questID, index, sel);
+    this.api.callVote(questID, index.value, sel.value).subscribe(data => {
+      index.value = "";
+      sel.value = -1;
+    }, err => console.error(err));
   }
-
 }

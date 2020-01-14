@@ -53,7 +53,7 @@ const main = async () => {
 	await window.loadURL("app://" + INDEX);
 	window.on("ready-to-show", window.show);
 	isDev() && window.webContents.openDevTools();
-	await window.webContents.executeJavaScript(`localStorage.setItem('Key', '${key}');`);
+	await window.webContents.executeJavaScript(`localStorage.setItem('key', '${key}');`);
 };
 
 /**

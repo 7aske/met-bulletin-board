@@ -12,7 +12,7 @@ export class ApiService {
     }
 
     // serverURL = "http://127.0.0.1:3000/";
-    serverURL = `http://${window.location.host}/`;
+    serverURL = window.location.protocol === "app:" ? "http://127.0.0.1:3000/":`http://${window.location.hostname}:3000/` ;
     // serverURL = "http://192.168.200.225:3000/";
 
     logout() {
@@ -100,6 +100,7 @@ export class ApiService {
     }
 
     callVote(questionID, studentIndex, questionOption) {
+      console.log(this.serverURL);
         return this.http.post(this.serverURL + "vote", {
             questionID: questionID,
             studentIndex: studentIndex,

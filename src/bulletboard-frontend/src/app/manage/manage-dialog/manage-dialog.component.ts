@@ -35,19 +35,19 @@ export class ManageDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  save(slideTitle, slideBodyTitle, slideBodyText, slideImageUrl, questionID) {
+  save(slideTitle, slideBodyTitle, slideBodyText, slideImageUrl, poll) {
     // slideTitle.value = "";
     // slideBodyTitle.value = "";
     // slideBodyText.value = "";
     // slideImageUrl.value = "";
     // questionID.value = -1;
-    console.log(slideTitle.value, slideBodyTitle.value, slideBodyText.value, slideImageUrl.value, questionID.value);
+    console.log(slideTitle.value, slideBodyTitle.value, slideBodyText.value, slideImageUrl.value, poll.value);
     this.api.saveSlide({
       slideTitle: slideTitle.value,
       slideBodyTitle: slideBodyTitle.value,
       slideBodyText: slideBodyText.value,
       slideImageUrl: slideImageUrl.value,
-      questionID: questionID.value
+      poll: poll.value
     }).subscribe(() => {
       this.close();
     });

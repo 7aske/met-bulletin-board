@@ -10,8 +10,9 @@ export class SlideShowAuthGuard implements CanActivate {
     constructor(private router: Router, private api: ApiService) { }
 
     canActivate() {
-        // return (window.location.href.startsWith("http://localhost") || window.location.href.startsWith("https://localhost"));
-        // return (window.location.href.startsWith("app://"));
+      console.log("heree");
       return true;
+        // return (window.location.href.startsWith("http://localhost") || window.location.href.startsWith("https://localhost"));
+        return (window.location.protocol === "app:");
     }
 }

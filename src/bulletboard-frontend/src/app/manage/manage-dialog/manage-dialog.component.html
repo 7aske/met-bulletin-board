@@ -26,8 +26,8 @@
             <div>
                 <mat-form-field>
                     <mat-label>Poll</mat-label>
-                    <mat-select #questionID>
-                        <mat-option *ngFor="let poll of polls" [value]="poll?.questionID">
+                    <mat-select #poll>
+                        <mat-option *ngFor="let poll of polls" [value]="poll">
                             {{poll.questionText}}
                         </mat-option>
                     </mat-select>
@@ -37,7 +37,7 @@
     </div>
     <div mat-dialog-actions>
         <button mat-raised-button class="actionBtn" color='primary'
-            (click)='save(slideTitle, slideBodyTitle,slideBodyText,slideImageUrl,questionID)'>Save</button>
+            (click)='save(slideTitle, slideBodyTitle,slideBodyText,slideImageUrl,poll)'>Save</button>
         <button mat-raised-button class="actionBtn" color='warn' (click)="close()">Close</button>
     </div>
 </div>

@@ -1,5 +1,5 @@
 <div class="homeWrapper" (mousemove)="stopSlideTimer()">
-    <div class="pageConrols">
+    <div class="pageControls">
         <span class="pageIndexDot" *ngFor="let slide of slides;let i = index" [ngClass]="{'active': i === slideIndex }"
             (click)="goToSlide(i);"></span>
     </div>
@@ -26,7 +26,7 @@
                             </mat-form-field>
                         </div>
                         <button mat-flat-button color="red"
-                            (click)="sendPollRes(slide.poll.questionID, index.value, select.value)">Glasaj!</button>
+                            (click)="sendPollRes(slide.poll.questionID, index, select)">Glasaj!</button>
                     </div>
                 </div>
                 <div class="myContainer slideText" *ngIf="slide.slideBodyTitle != null">
