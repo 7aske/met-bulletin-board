@@ -7,7 +7,7 @@
 
     <mat-tab-group>
         <mat-tab label="Slides">
-            <button mat-raised-button color="primary" class="createSlide" (click)="openDialogSlide(null)">Create
+            <button mat-raised-button color="primary" class="createSlide" (click)="openDialogSlide(undefined)">Create
                 slide</button>
 
             <div class="slideItemsWrapper">
@@ -33,7 +33,7 @@
         </mat-tab>
 
         <mat-tab label="Polls">
-            <button mat-raised-button color="primary" class="createSlide" (click)="openDialogPoll(null)">Create
+            <button mat-raised-button color="primary" class="createSlide" (click)="openDialogPoll(undefined)">Create
                 poll</button>
             <mat-list class="polls">
                 <div *ngFor="let poll of polls;">

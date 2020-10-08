@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {Component, OnInit, Inject, ViewChild} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ApiService } from 'src/app/apis';
 
@@ -8,13 +8,15 @@ import { ApiService } from 'src/app/apis';
   styleUrls: ['./manage-poll-dialog.component.css']
 })
 export class ManagePollDialogComponent implements OnInit {
-  poll: any = { questionID: undefined, questionText: "", questionOptions: [] };
+  poll: any = { questionID: undefined, questionText: '', questionOptions: [] };
+  @ViewChild('questText', {static: false}) question: HTMLInputElement;
+  @ViewChild('questOpt', {static: false}) txtOpt: HTMLAreaElement;
 
   constructor(public dialogRef: MatDialogRef<ManagePollDialogComponent>, @Inject(MAT_DIALOG_DATA) data, private api: ApiService) {
-
-    // if (data !== "")
-    // this.poll = data;
-
+    if (data) {
+      this.poll = data;
+      this.question.value = this.poll.questionText;
+    }
   }
 
   ngOnInit() {
@@ -26,7 +28,7 @@ export class ManagePollDialogComponent implements OnInit {
 
   addQuestOpt(textControl) {
     this.poll.questionOptions.push(textControl.value);
-    textControl.value = "";
+    textControl.value = '';
   }
 
   removeQuestOpt(index) {
@@ -35,10 +37,10 @@ export class ManagePollDialogComponent implements OnInit {
 
   save(questionText) {
     this.poll.questionText = questionText;
-    console.log("poll", this.poll);
+    console.log('poll', this.poll);
     this.api.savePoll(this.poll).subscribe(() => {
       this.close();
-    })
+    });
   }
 
 }

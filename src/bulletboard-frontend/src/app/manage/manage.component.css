@@ -6,7 +6,7 @@
 #menu{
     width: 100%;
     padding: 0.5em;
-    background-color: lightcoral;
+    background-color: #a70532;
 }
 #menu > *{
     display: inline-block;
@@ -18,9 +18,8 @@
 
 .slideItemsWrapper{
     width: 90%;
-    margin: 0 auto;
-    margin-top: 1em;
-    align-items: center;
+  margin: 1em auto 0;
+  align-items: center;
 }
 
 .slideItem{
